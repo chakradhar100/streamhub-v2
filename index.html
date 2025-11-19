@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamHub V9</title>
+    <title>StreamHub V10 FIXED</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-    <h1>🎬 StreamHub V9</h1>
+    <h1>🎬 StreamHub V10</h1>
     <div class="search-box">
         <input id="searchInput" type="text" placeholder="Search movie or series...">
         <button onclick="searchMovie()">Search</button>
@@ -38,6 +38,8 @@
         <iframe id="playerFrame" allowfullscreen></iframe>
 
         <button id="nextBtn" class="next-btn hidden" onclick="nextEpisode()">Next Episode ⏭</button>
+
+        <pre id="debugLog" class="debug-box"></pre>
     </div>
 </div>
 

@@ -120,3 +120,13 @@ iframe {
 .next-btn {
     margin-top: 10px;
 }
+
+.debug-box {
+    background: #000;
+    color: #33ff99;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: left;
+    border-radius: 10px;
+    font-size: 12px;
+}
