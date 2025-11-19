@@ -3,12 +3,16 @@ const OMDB_DETAILS = "https://www.omdbapi.com/?apikey=564727fa&i=";
 const TMDB_KEY = "de0c5cddca718ef54bb93e78bce0d674";
 
 async function searchMovie() {
-    const query = document.getElementById("searchInput").value.trim();
+    let query = document.getElementById("searchInput").value.trim();
     if (!query) return;
 
+    // FIX: Remove years, parentheses, and symbols that break OMDb search
+    query = query.replace(/\(\d{4}\)/, "").trim();   // remove (2014)
+    query = query.replace(/[^\w\s]/g, " ").trim();   // remove special characters
+    
     document.getElementById("results").innerHTML = "Loading...";
 
-    let res = await fetch(OMDB_KEY + query);
+    let res = await fetch(OMDB_KEY + encodeURIComponent(query));
     let data = await res.json();
 
     if (!data.Search) {
@@ -18,6 +22,7 @@ async function searchMovie() {
 
     displayResults(data.Search);
 }
+
 
 async function displayResults(list) {
     let html = "";
