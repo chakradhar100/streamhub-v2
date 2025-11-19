@@ -1,4 +1,4 @@
-// SAMPLE MOVIE LIST WITH POSTERS
+// SAMPLE MOVIES TO DISPLAY ON HOME PAGE
 const sampleMovies = [
     {
         title: "Breaking Bad",
@@ -25,7 +25,6 @@ const sampleMovies = [
 const content = document.getElementById("content");
 const searchInput = document.getElementById("searchInput");
 
-// LOAD HOME PAGE WITH SAMPLE MOVIES
 function loadHome() {
     content.innerHTML = "";
     sampleMovies.forEach(movie => renderCard(movie));
@@ -34,31 +33,34 @@ function loadHome() {
 function renderCard(movie) {
     const div = document.createElement("div");
     div.className = "card";
+
     div.innerHTML = `
         <img src="${movie.poster}" />
         <div class="card-title">${movie.title}</div>
     `;
-    
+
     div.onclick = () => openPlayer(movie.imdb);
 
     content.appendChild(div);
 }
 
-// OPEN VIDEO PLAYER
-function openPlayer(imdbCode) {
-    // Replace with your embed URL format
-    const embed = `https://your-embed-site.com/player?imdb=${imdbCode}`;
+// OPEN PLAYER MODAL
+function openPlayer(imdb) {
+
+    // USE YOUR PLAYER SOURCE
+    const embed = `https://vidsrc.to/embed/movie/${imdb}`;
 
     document.getElementById("playerFrame").src = embed;
     document.getElementById("playerModal").classList.remove("hidden");
 }
 
+// CLOSE MODAL
 document.getElementById("closePlayer").onclick = () => {
     document.getElementById("playerModal").classList.add("hidden");
     document.getElementById("playerFrame").src = "";
 };
 
-// SEARCH
+// SEARCH FUNCTION
 searchInput.addEventListener("input", () => {
     const q = searchInput.value.toLowerCase();
 
@@ -67,17 +69,17 @@ searchInput.addEventListener("input", () => {
         return;
     }
 
-    const filtered = sampleMovies.filter(m =>
+    const results = sampleMovies.filter(m =>
         m.title.toLowerCase().includes(q)
     );
 
     content.innerHTML = "";
-    filtered.forEach(renderCard);
+    results.forEach(renderCard);
 
-    if (filtered.length === 0) {
+    if (results.length === 0) {
         content.innerHTML = `<p>No results found.</p>`;
     }
 });
 
-// INITIAL LOAD
+// INIT
 loadHome();
