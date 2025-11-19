@@ -1,44 +1,28 @@
-<!doctype html><html><head>
-<meta charset='utf-8'/>
-<meta name='viewport' content='width=device-width,initial-scale=1'/>
-<title>StreamHub v5</title>
-<link rel='stylesheet' href='style.css'/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StreamHub V6</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header class='main-header'>
- <h1 class='brand'>StreamHub</h1>
- <div class='right'>
-   <input id='search' placeholder='Search...'>
- </div>
+<header class="nav">
+  <h1 class="logo">StreamHub<span>V6</span></h1>
+  <input id="searchInput" class="search" placeholder="Search by title..." oninput="searchMovies()" />
 </header>
 
-<section class='hero'>
- <div class='hero-content'>
-   <h2 id='heroTitle'>Featured</h2>
-   <p id='heroDesc'></p>
-   <div class='hero-actions'>
-     <button id='heroPlay' class='btn'>Play</button>
-   </div>
- </div>
- <div class='hero-media'>
-   <img id='heroPoster' src=''/>
- </div>
-</section>
+<section id="results" class="results"></section>
 
-<div id='rows'></div>
-
-<section>
-  <div class='section-title'>Continue Watching</div>
-  <div id='continueRow' class='video-row'></div>
-</section>
-
-<div id='playerModal' class='modal'>
- <div class='modal-content'>
-  <button id='closePlayer' class='close'>&times;</button>
-  <video id='player' controls></video>
- </div>
+<!-- PLAYER MODAL -->
+<div id="playerModal" class="player-modal">
+    <div class="player-box">
+        <button class="close-btn" onclick="closePlayer()">✕</button>
+        <iframe id="playerFrame" allowfullscreen frameborder="0" referrerpolicy="no-referrer"></iframe>
+    </div>
 </div>
 
-<script src='app.js'></script>
-</body></html>
+<script src="app.js"></script>
+</body>
+</html>
