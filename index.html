@@ -1,26 +1,72 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>StreamHub V6</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StreamHub V7 — Neon</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header class="nav">
-  <h1 class="logo">StreamHub<span>V6</span></h1>
-  <input id="searchInput" class="search" placeholder="Search by title..." oninput="searchMovies()" />
+<header class="topbar">
+  <div class="brand">StreamHub <span>V7</span></div>
+
+  <div class="controls">
+    <input id="searchInput" placeholder="Search movies or series (OMDb)" autocomplete="off"/>
+    <button id="settingsBtn" title="Settings">⚙️</button>
+  </div>
 </header>
 
-<section id="results" class="results"></section>
-
-<!-- PLAYER MODAL -->
-<div id="playerModal" class="player-modal">
-    <div class="player-box">
-        <button class="close-btn" onclick="closePlayer()">✕</button>
-        <iframe id="playerFrame" allowfullscreen frameborder="0" referrerpolicy="no-referrer"></iframe>
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Neon Picks</h1>
+      <p>Search for titles, fetch IMDB codes automatically. Provide your OMDb API key in Settings.</p>
     </div>
+    <div class="hero-art"></div>
+  </section>
+
+  <section id="results" class="rows">
+    <!-- Search results will be injected here -->
+  </section>
+</main>
+
+<!-- bottom bar for selected item (season/ep for series) -->
+<div id="pickerBar" class="picker hidden">
+  <div id="pickerInfo"></div>
+  <div id="seasonEpisode" class="hidden">
+    <input id="seasonInput" type="number" min="1" placeholder="Season" />
+    <input id="episodeInput" type="number" min="1" placeholder="Episode" />
+  </div>
+  <button id="embedBtn" class="btn primary">Open Embed</button>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" class="modal">
+  <div class="modal-card">
+    <button class="close" id="closeSettings">✕</button>
+    <h2>Settings</h2>
+    <label>OMDb API Key</label>
+    <input id="omdbKey" placeholder="Enter OMDb API key (get at http://www.omdbapi.com/)" />
+    <small class="muted">No key included. Enter your key to enable live search.</small>
+
+    <label>Embed provider base URL</label>
+    <input id="embedBase" placeholder="https://your-embed-provider.example/embed" />
+    <small class="muted">This is a safe placeholder. Use a legal embed provider you control.</small>
+
+    <div class="actions">
+      <button id="saveSettings" class="btn">Save</button>
+      <button id="clearSettings" class="btn secondary">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER IFRAME MODAL -->
+<div id="playerModal" class="modal">
+  <div class="player-card">
+    <button class="close" id="closePlayer">✕</button>
+    <iframe id="playerFrame" frameborder="0" allowfullscreen referrerpolicy="no-referrer"></iframe>
+  </div>
 </div>
 
 <script src="app.js"></script>
