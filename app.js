@@ -1,165 +1,169 @@
-console.log("StreamHub TMDB Version Loaded");
+// ===== StreamHub v2 Full Fix =====
 
-const TMDB_KEY = "1c161f19e296f253fed30df0a8bd7d93";
-const IMG = "https://image.tmdb.org/t/p/w500";
+// Global variable
+let currentIMDB = null;
 
-const searchInput = document.getElementById("searchInput");
-const searchBtn = document.getElementById("searchBtn");
-const results = document.getElementById("results");
+// TMDB API
+const API_KEY = '1c161f19e296f253fed30df0a8bd7d93';
+const BASE_URL = 'https://api.themoviedb.org/3';
 
-const popularMovies = document.getElementById("popularMovies");
-const popularTV = document.getElementById("popularTV");
+// Elements
+const popularMoviesDiv = document.getElementById('popular-movies');
+const popularTVDiv = document.getElementById('popular-tv');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+const searchResultsDiv = document.getElementById('search-results');
+const loadEpisodeBtn = document.getElementById('loadEpisodeBtn');
+const playerDiv = document.getElementById('player');
 
-// Modal elements
-const playerModal = document.getElementById("playerModal");
-const closePlayer = document.getElementById("closePlayer");
-const playerFrame = document.getElementById("playerFrame");
-const playerTitle = document.getElementById("playerTitle");
-const tvControls = document.getElementById("tvControls");
-const seasonInput = document.getElementById("seasonInput");
-const episodeInput = document.getElementById("episodeInput");
-const loadEpisodeBtn = document.getElementById("loadEpisodeBtn");
-const debugLog = document.getElementById("debugLog");
-
-function log(msg) {
-    console.log(msg);
-    debugLog.textContent += msg + "\n";
+// Helper to fetch JSON
+async function fetchJSON(url) {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        return await res.json();
+    } catch (err) {
+        console.error('Fetch error:', err);
+        alert('Failed to fetch data. Check console.');
+        return null;
+    }
 }
 
-// ------------------ TMDB SEARCH ---------------------
-async function searchTMDB(query) {
-    const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}`;
-
-    log("[SEARCH] " + url);
-
-    const res = await fetch(url);
-    if (!res.ok) return [];
-    const data = await res.json();
-
-    return data.results.filter(r => r.media_type === "movie" || r.media_type === "tv");
-}
-
-// ------------------ GET IMDB ID ----------------------
-async function getIMDBfromTMDB(type, id) {
-    const url =
-        type === "movie"
-            ? `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_KEY}`
-            : `https://api.themoviedb.org/3/tv/${id}?api_key=${TMDB_KEY}`;
-
-    log("[IMDB] " + url);
-
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const data = await res.json();
-
-    return data.imdb_id;
-}
-
-// --------------- TMDB POPULAR MOVIES -----------------
+// ===== Popular Movies =====
 async function loadPopularMovies() {
-    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}`;
-    const res = await fetch(url);
-    const json = await res.json();
+    const data = await fetchJSON(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
+    if (!data) return;
 
-    json.results.forEach(m => {
-        popularMovies.appendChild(makeCard(m, "movie"));
+    popularMoviesDiv.innerHTML = '';
+
+    data.results.forEach(movie => {
+        const imgSrc = movie.poster_path
+            ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+            : 'fallback.png';
+
+        const movieEl = document.createElement('div');
+        movieEl.classList.add('movie-item');
+        movieEl.innerHTML = `
+            <img src="${imgSrc}" alt="${movie.title}" onerror="this.src='fallback.png'">
+            <h4>${movie.title}</h4>
+        `;
+        movieEl.onclick = () => openMovie(movie.id);
+        popularMoviesDiv.appendChild(movieEl);
     });
 }
 
-// --------------- TMDB POPULAR TV ---------------------
+// ===== Popular TV Shows =====
 async function loadPopularTV() {
-    const url = `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_KEY}`;
-    const res = await fetch(url);
-    const json = await res.json();
+    const data = await fetchJSON(`${BASE_URL}/tv/popular?api_key=${API_KEY}&language=en-US&page=1`);
+    if (!data) return;
 
-    json.results.forEach(tv => {
-        popularTV.appendChild(makeCard(tv, "tv"));
+    popularTVDiv.innerHTML = '';
+
+    data.results.forEach(tv => {
+        const imgSrc = tv.poster_path
+            ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
+            : 'fallback.png';
+
+        const tvEl = document.createElement('div');
+        tvEl.classList.add('tv-item');
+        tvEl.innerHTML = `
+            <img src="${imgSrc}" alt="${tv.name}" onerror="this.src='fallback.png'">
+            <h4>${tv.name}</h4>
+        `;
+        tvEl.onclick = () => openTV(tv.id);
+        popularTVDiv.appendChild(tvEl);
     });
 }
 
-// --------------- MAKE CARD ---------------------------
-function makeCard(item, forcedType = null) {
-    let type = forcedType || item.media_type;
-    let title = item.title || item.name;
-    let poster = item.poster_path ? IMG + item.poster_path : "https://via.placeholder.com/300x450?text=No+Image";
-    let year = (item.release_date || item.first_air_date || "").split("-")[0];
+// ===== Open Movie =====
+async function openMovie(tmdbId) {
+    const data = await fetchJSON(`${BASE_URL}/movie/${tmdbId}?api_key=${API_KEY}`);
+    if (!data) return;
 
-    let div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-        <img class="poster" src="${poster}">
-        <div class="meta">
-            <div class="meta-title">${title}</div>
-            <div class="meta-year">${year}</div>
-        </div>
-    `;
-
-    div.onclick = () => openPlayer(type, item.id, title);
-
-    return div;
-}
-
-// ---------------- OPEN PLAYER -------------------------
-async function openPlayer(type, tmdbID, title) {
-    debugLog.textContent = "";
-    log("[OPEN] type=" + type + " tmdb=" + tmdbID);
-
-    playerTitle.textContent = title;
-
-    const imdb = await getIMDBfromTMDB(type, tmdbID);
-    if (!imdb) {
-        alert("Could not fetch IMDb ID");
+    currentIMDB = data.imdb_id;
+    if (!currentIMDB) {
+        alert('IMDB ID not found!');
         return;
     }
 
-    log("[IMDB FOUND] " + imdb);
+    loadPlayer(currentIMDB);
+}
 
-    if (type === "tv") {
-        tvControls.classList.remove("hidden");
-    } else {
-        tvControls.classList.add("hidden");
+// ===== Open TV Show =====
+async function openTV(tvId) {
+    const data = await fetchJSON(`${BASE_URL}/tv/${tvId}?api_key=${API_KEY}`);
+    if (!data) return;
+
+    // Default to first episode of first season
+    const seasonNumber = 1;
+    const episodeNumber = 1;
+
+    // Fetch episode info
+    const epData = await fetchJSON(`${BASE_URL}/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}?api_key=${API_KEY}`);
+    if (!epData) return;
+
+    currentIMDB = epData.imdb_id;
+    if (!currentIMDB) {
+        alert('IMDB ID not found for episode!');
+        return;
     }
 
-    loadVideo(type, imdb);
-
-    playerModal.classList.remove("hidden");
+    loadPlayer(currentIMDB);
 }
 
-function loadVideo(type, imdb) {
-    let season = seasonInput.value;
-    let episode = episodeInput.value;
-
-    let url =
-        type === "tv"
-            ? `https://vidsrc-embed.ru/embed/tv?imdb=${imdb}&season=${season}&episode=${episode}`
-            : `https://vidsrc-embed.ru/embed/movie?imdb=${imdb}`;
-
-    log("[PLAYER] " + url);
-
-    playerFrame.src = url;
+// ===== Player =====
+function loadPlayer(imdbId) {
+    playerDiv.innerHTML = `
+        <iframe 
+            src="https://vidsrc-embed.ru/embed/movie?imdb=${imdbId}" 
+            frameborder="0" 
+            width="100%" 
+            height="500" 
+            allowfullscreen>
+        </iframe>
+    `;
 }
 
+// ===== Search =====
+async function search(query) {
+    if (!query) return;
+    const data = await fetchJSON(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+    if (!data) return;
+
+    searchResultsDiv.innerHTML = '';
+
+    data.results.forEach(item => {
+        const title = item.title || item.name || 'Unknown';
+        const imgSrc = item.poster_path
+            ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
+            : 'fallback.png';
+
+        const el = document.createElement('div');
+        el.classList.add('search-item');
+        el.innerHTML = `
+            <img src="${imgSrc}" alt="${title}" onerror="this.src='fallback.png'">
+            <h4>${title}</h4>
+        `;
+
+        el.onclick = () => {
+            if (item.media_type === 'movie') openMovie(item.id);
+            else if (item.media_type === 'tv') openTV(item.id);
+        };
+
+        searchResultsDiv.appendChild(el);
+    });
+}
+
+// ===== Event Listeners =====
+searchBtn.onclick = () => search(searchInput.value);
 loadEpisodeBtn.onclick = () => {
-    loadVideo("tv", currentIMDB);
+    if (!currentIMDB) {
+        alert('No movie or episode selected!');
+        return;
+    }
+    loadPlayer(currentIMDB);
 };
 
-closePlayer.onclick = () => {
-    playerModal.classList.add("hidden");
-    playerFrame.src = "";
-};
-
-// SEARCH BUTTON
-searchBtn.onclick = async () => {
-    let q = searchInput.value.trim();
-    if (q.length < 2) return alert("Type at least 2 characters");
-
-    let items = await searchTMDB(q);
-
-    results.innerHTML = "";
-    items.forEach(it => results.appendChild(makeCard(it)));
-};
-
-// Load popular content
+// ===== Initialize =====
 loadPopularMovies();
 loadPopularTV();

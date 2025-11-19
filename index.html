@@ -3,63 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamHub Public (TMDB Version)</title>
+    <title>StreamHub v2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="topbar">
-    <div class="brand">StreamHub <span class="tag">TMDB</span></div>
+    <header>
+        <h1>StreamHub v2</h1>
+    </header>
 
-    <div class="controls">
-        <input id="searchInput" placeholder="Search movie or TV show..." />
-        <button id="searchBtn">Search</button>
-    </div>
-</header>
+    <section id="search-section">
+        <input type="text" id="search-input" placeholder="Search movies or TV shows...">
+        <button id="search-btn">Search</button>
+    </section>
 
-<main>
-
-    <section>
+    <section id="popular-movies-section">
         <h2>Popular Movies</h2>
-        <div id="popularMovies" class="row-strip"></div>
+        <div id="popular-movies" class="grid-container"></div>
     </section>
 
-    <section>
+    <section id="popular-tv-section">
         <h2>Popular TV Shows</h2>
-        <div id="popularTV" class="row-strip"></div>
+        <div id="popular-tv" class="grid-container"></div>
     </section>
 
-    <section>
+    <section id="search-results-section">
         <h2>Search Results</h2>
-        <div id="results" class="row-strip"></div>
+        <div id="search-results" class="grid-container"></div>
     </section>
 
-</main>
+    <section id="player-section">
+        <h2>Player</h2>
+        <div id="player"></div>
+        <button id="loadEpisodeBtn">Reload Player</button>
+    </section>
 
-<!-- PLAYER MODAL -->
-<div id="playerModal" class="modal hidden">
-    <div class="modal-card">
-        <button id="closePlayer" class="close">✕</button>
-        <h3 id="playerTitle">Player</h3>
-
-        <div id="tvControls" class="tv-controls hidden">
-            Season <input id="seasonInput" type="number" min="1" value="1">
-            Episode <input id="episodeInput" type="number" min="1" value="1">
-            <button id="loadEpisodeBtn">Load</button>
-        </div>
-
-        <iframe id="playerFrame" allowfullscreen></iframe>
-
-        <div class="debug-box">
-            <pre id="debugLog"></pre>
-        </div>
-    </div>
-</div>
-
-<footer class="footer">
-    This product uses the TMDB API but is not endorsed or certified by TMDB.
-</footer>
-
-<script src="app.js"></script>
-</body>
-</html>
+    <script src="

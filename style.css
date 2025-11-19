@@ -1,65 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamHub Public (TMDB Version)</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+/* ===== Basic Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-<header class="topbar">
-    <div class="brand">StreamHub <span class="tag">TMDB</span></div>
+/* ===== Body ===== */
+body {
+    background-color: #121212;
+    color: #f0f0f0;
+    padding: 20px;
+}
 
-    <div class="controls">
-        <input id="searchInput" placeholder="Search movie or TV show..." />
-        <button id="searchBtn">Search</button>
-    </div>
-</header>
+/* ===== Header ===== */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-<main>
+header h1 {
+    font-size: 2.5em;
+    color: #ff5722;
+}
 
-    <section>
-        <h2>Popular Movies</h2>
-        <div id="popularMovies" class="row-strip"></div>
-    </section>
+/* ===== Sections ===== */
+section {
+    margin-bottom: 40px;
+}
 
-    <section>
-        <h2>Popular TV Shows</h2>
-        <div id="popularTV" class="row-strip"></div>
-    </section>
+section h2 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ff5722;
+    display: inline-block;
+    padding-bottom: 5px;
+}
 
-    <section>
-        <h2>Search Results</h2>
-        <div id="results" class="row-strip"></div>
-    </section>
+/* ===== Search ===== */
+#search-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
 
-</main>
+#search-section input {
+    width: 60%;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    margin-right: 10px;
+}
 
-<!-- PLAYER MODAL -->
-<div id="playerModal" class="modal hidden">
-    <div class="modal-card">
-        <button id="closePlayer" class="close">✕</button>
-        <h3 id="playerTitle">Player</h3>
+#search-section button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #ff5722;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
 
-        <div id="tvControls" class="tv-controls hidden">
-            Season <input id="seasonInput" type="number" min="1" value="1">
-            Episode <input id="episodeInput" type="number" min="1" value="1">
-            <button id="loadEpisodeBtn">Load</button>
-        </div>
+#search-section button:hover {
+    background-color: #e64a19;
+}
 
-        <iframe id="playerFrame" allowfullscreen></iframe>
+/* ===== Grid Container ===== */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+}
 
-        <div class="debug-box">
-            <pre id="debugLog"></pre>
-        </div>
-    </div>
-</div>
+/* ===== Movie / TV / Search Item ===== */
+.movie-item, .tv-item, .search-item {
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
 
-<footer class="footer">
-    This product uses the TMDB API but is not endorsed or certified by TMDB.
-</footer>
+.movie-item:hover, .tv-item:hover, .search-item:hover {
+    transform: scale(1.05);
+}
 
-<script src="app.js"></script>
-</body>
-</html>
+.movie-item img, .tv-item img, .search-item img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.movie-item h4, .tv-item h4, .
