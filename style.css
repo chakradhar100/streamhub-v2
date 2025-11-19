@@ -1,97 +1,122 @@
 body {
     margin: 0;
-    font-family: Poppins, sans-serif;
-    background: #111;
-    color: #fff;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1c1f26, #15161a);
+    color: white;
 }
 
-.header {
+header {
+    text-align: center;
     padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #222;
+    background: #20232b;
+    box-shadow: 0 0 20px #000;
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: bold;
+h1 {
+    margin: 0;
+    color: #ff9f1c;
+    font-size: 32px;
 }
 
-.search {
+.search-box {
+    margin-top: 15px;
+}
+
+.search-box input {
     padding: 10px;
-    width: 240px;
-    border-radius: 8px;
+    width: 260px;
+    border-radius: 10px;
     border: none;
 }
 
-#content {
+button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #ff9f1c;
+    color: black;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.grid {
     padding: 20px;
     display: grid;
     gap: 20px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 }
 
 .card {
-    background: #333;
-    border-radius: 10px;
-    overflow: hidden;
+    background: #2c3038;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.3s;
 }
 
 .card:hover {
     transform: scale(1.05);
+    background: #3d414b;
 }
 
 .card img {
     width: 100%;
-    height: 250px;
+    height: 230px;
+    border-radius: 10px;
     object-fit: cover;
 }
 
-.card-title {
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-}
-
+/* Modal */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.85);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
-.modal-box {
-    width: 90%;
-    max-width: 900px;
-    background: #000;
-    padding: 10px;
-    border-radius: 10px;
+.modal-content {
+    background: #22252d;
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    text-align: center;
     position: relative;
 }
 
-#playerFrame {
-    width: 100%;
-    height: 500px;
-    border: none;
-    border-radius: 10px;
-}
-
 .close {
-    font-size: 26px;
     position: absolute;
     right: 15px;
-    top: 10px;
+    top: 5px;
+    font-size: 30px;
     cursor: pointer;
+}
+
+iframe {
+    width: 100%;
+    height: 400px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: none;
+}
+
+.episode-controls input {
+    width: 60px;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.next-btn {
+    margin-top: 10px;
 }

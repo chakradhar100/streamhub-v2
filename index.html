@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StreamHub V2 Fixed</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub V9</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header class="header">
-    <h1 class="logo">StreamHub</h1>
-    <input id="searchInput" class="search" placeholder="Search movies or series..." />
+<header>
+    <h1>🎬 StreamHub V9</h1>
+    <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Search movie or series...">
+        <button onclick="searchMovie()">Search</button>
+    </div>
 </header>
 
-<main id="content"></main>
+<div id="results" class="grid"></div>
 
-<!-- PLAYER MODAL -->
+<!-- Player Modal -->
 <div id="playerModal" class="modal hidden">
-    <div class="modal-box">
-        <span id="closePlayer" class="close">&times;</span>
+    <div class="modal-content">
+        <span class="close" onclick="closePlayer()">&times;</span>
+
+        <h2 id="playerTitle"></h2>
+
+        <div id="episodeControls" class="episode-controls hidden">
+            <label>Season:</label>
+            <input type="number" id="seasonInput" min="1" value="1">
+
+            <label>Episode:</label>
+            <input type="number" id="episodeInput" min="1" value="1">
+
+            <button onclick="updateEpisode()">Load</button>
+        </div>
+
         <iframe id="playerFrame" allowfullscreen></iframe>
+
+        <button id="nextBtn" class="next-btn hidden" onclick="nextEpisode()">Next Episode ⏭</button>
     </div>
 </div>
 
 <script src="app.js"></script>
-
 </body>
 </html>

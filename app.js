@@ -1,85 +1,105 @@
-// SAMPLE MOVIES TO DISPLAY ON HOME PAGE
-const sampleMovies = [
-    {
-        title: "Breaking Bad",
-        imdb: "tt0903747",
-        poster: "https://m.media-amazon.com/images/M/MV5BZmFiODFlZmQt.jpg"
-    },
-    {
-        title: "Inception",
-        imdb: "tt1375666",
-        poster: "https://m.media-amazon.com/images/I/51zUbui+gbL._AC_.jpg"
-    },
-    {
-        title: "Interstellar",
-        imdb: "tt0816692",
-        poster: "https://m.media-amazon.com/images/I/91kFYg4fX3L._AC_SL1500_.jpg"
-    },
-    {
-        title: "Game of Thrones",
-        imdb: "tt0944947",
-        poster: "https://m.media-amazon.com/images/I/81aLojU9AML._AC_SL1500_.jpg"
-    }
-];
+const OMDB_KEY = "https://www.omdbapi.com/?apikey=564727fa&s=";
+const OMDB_DETAILS = "https://www.omdbapi.com/?apikey=564727fa&i=";
+const TMDB_KEY = "de0c5cddca718ef54bb93e78bce0d674";
 
-const content = document.getElementById("content");
-const searchInput = document.getElementById("searchInput");
+async function searchMovie() {
+    const query = document.getElementById("searchInput").value.trim();
+    if (!query) return;
 
-function loadHome() {
-    content.innerHTML = "";
-    sampleMovies.forEach(movie => renderCard(movie));
-}
+    document.getElementById("results").innerHTML = "Loading...";
 
-function renderCard(movie) {
-    const div = document.createElement("div");
-    div.className = "card";
+    let res = await fetch(OMDB_KEY + query);
+    let data = await res.json();
 
-    div.innerHTML = `
-        <img src="${movie.poster}" />
-        <div class="card-title">${movie.title}</div>
-    `;
-
-    div.onclick = () => openPlayer(movie.imdb);
-
-    content.appendChild(div);
-}
-
-// OPEN PLAYER MODAL
-function openPlayer(imdb) {
-
-    // USE YOUR PLAYER SOURCE
-    const embed = `https://vidsrc.to/embed/movie/${imdb}`;
-
-    document.getElementById("playerFrame").src = embed;
-    document.getElementById("playerModal").classList.remove("hidden");
-}
-
-// CLOSE MODAL
-document.getElementById("closePlayer").onclick = () => {
-    document.getElementById("playerModal").classList.add("hidden");
-    document.getElementById("playerFrame").src = "";
-};
-
-// SEARCH FUNCTION
-searchInput.addEventListener("input", () => {
-    const q = searchInput.value.toLowerCase();
-
-    if (q.length < 2) {
-        loadHome();
+    if (!data.Search) {
+        document.getElementById("results").innerHTML = "No results found.";
         return;
     }
 
-    const results = sampleMovies.filter(m =>
-        m.title.toLowerCase().includes(q)
-    );
+    displayResults(data.Search);
+}
 
-    content.innerHTML = "";
-    results.forEach(renderCard);
+async function displayResults(list) {
+    let html = "";
 
-    if (results.length === 0) {
-        content.innerHTML = `<p>No results found.</p>`;
+    for (let item of list) {
+        let poster = await getTMDBPoster(item.imdbID);
+
+        html += `
+            <div class="card" onclick='openPlayer(${JSON.stringify(item)})'>
+                <img src="${poster}" alt="poster">
+                <h3>${item.Title}</h3>
+                <p>${item.Year}</p>
+            </div>
+        `;
     }
-});
 
-// INIT
-loadHome();
+    document.getElementById("results").innerHTML = html;
+}
+
+async function getTMDBPoster(imdbID) {
+    try {
+        let res = await fetch(
+            `https://api.themoviedb.org/3/find/${imdbID}?api_key=${TMDB_KEY}&external_source=imdb_id`
+        );
+
+        let data = await res.json();
+        let item = data.movie_results[0] || data.tv_results[0];
+
+        if (item && item.poster_path) {
+            return "https://image.tmdb.org/t/p/w500" + item.poster_path;
+        }
+    } catch (e) {}
+
+    return "https://via.placeholder.com/300x450?text=No+Image";
+}
+
+let currentTitle = "";
+let currentIMDB = "";
+let currentSeason = 1;
+let currentEpisode = 1;
+let isSeries = false;
+
+function openPlayer(movie) {
+    currentTitle = movie.Title;
+    currentIMDB = movie.imdbID;
+    isSeries = movie.Type === "series";
+
+    document.getElementById("playerTitle").innerText = currentTitle;
+    document.getElementById("playerModal").classList.remove("hidden");
+
+    document.getElementById("episodeControls").classList.toggle("hidden", !isSeries);
+    document.getElementById("nextBtn").classList.toggle("hidden", !isSeries);
+
+    loadPlayer();
+}
+
+function loadPlayer() {
+    let url = "";
+
+    if (isSeries) {
+        url = `https://vidsrc-embed.ru/tv/${currentIMDB}/${currentSeason}/${currentEpisode}`;
+    } else {
+        url = `https://vidsrc-embed.ru/movie/${currentIMDB}`;
+    }
+
+    document.getElementById("playerFrame").src = url;
+}
+
+function updateEpisode() {
+    currentSeason = parseInt(document.getElementById("seasonInput").value);
+    currentEpisode = parseInt(document.getElementById("episodeInput").value);
+
+    loadPlayer();
+}
+
+function nextEpisode() {
+    currentEpisode++;
+    document.getElementById("episodeInput").value = currentEpisode;
+    loadPlayer();
+}
+
+function closePlayer() {
+    document.getElementById("playerModal").classList.add("hidden");
+    document.getElementById("playerFrame").src = "";
+}
