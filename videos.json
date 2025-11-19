@@ -1,0 +1,6 @@
+[
+    {"title":"Nature Documentary","thumb":"https://placehold.co/400x220","src":"videos/sample1.mp4","category":"Documentaries"},
+    {"title":"Space Exploration","thumb":"https://placehold.co/400x220","src":"videos/sample2.mp4","category":"Documentaries"},
+    {"title":"Action Short Film","thumb":"https://placehold.co/400x220","src":"videos/sample3.mp4","category":"Short Films"},
+    {"title":"Comedy Clip","thumb":"https://placehold.co/400x220","src":"videos/sample4.mp4","category":"Comedy"}
+]
