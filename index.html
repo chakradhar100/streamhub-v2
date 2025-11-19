@@ -1,55 +1,64 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StreamHub — No-API Version</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub Public (TMDB Version)</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header class="topbar">
-    <div class="brand">StreamHub</div>
+<header class="topbar">
+    <div class="brand">StreamHub <span class="tag">TMDB</span></div>
+
     <div class="controls">
-      <input id="searchInput" placeholder="Search movies & TV (type ≥ 2 chars)" />
-      <button id="searchBtn">Search</button>
+        <input id="searchInput" placeholder="Search movie or TV show..." />
+        <button id="searchBtn">Search</button>
     </div>
-  </header>
+</header>
 
-  <main id="main">
-    <section class="section">
-      <h2 class="section-title">Samples</h2>
-      <div id="samples" class="row-strip"></div>
+<main>
+
+    <section>
+        <h2>Popular Movies</h2>
+        <div id="popularMovies" class="row-strip"></div>
     </section>
 
-    <section class="section">
-      <h2 class="section-title">Search Results</h2>
-      <div id="results" class="row-strip"></div>
+    <section>
+        <h2>Popular TV Shows</h2>
+        <div id="popularTV" class="row-strip"></div>
     </section>
-  </main>
 
-  <!-- Player modal -->
-  <div id="playerModal" class="modal hidden">
+    <section>
+        <h2>Search Results</h2>
+        <div id="results" class="row-strip"></div>
+    </section>
+
+</main>
+
+<!-- PLAYER MODAL -->
+<div id="playerModal" class="modal hidden">
     <div class="modal-card">
-      <button id="closePlayer" class="close">✕</button>
-      <h3 id="playerTitle">Player</h3>
+        <button id="closePlayer" class="close">✕</button>
+        <h3 id="playerTitle">Player</h3>
 
-      <div id="tvControls" class="tv-controls hidden">
-        Season <input id="seasonInput" type="number" min="1" value="1" />
-        Episode <input id="episodeInput" type="number" min="1" value="1" />
-        <button id="loadEpisodeBtn">Load</button>
-      </div>
+        <div id="tvControls" class="tv-controls hidden">
+            Season <input id="seasonInput" type="number" min="1" value="1">
+            Episode <input id="episodeInput" type="number" min="1" value="1">
+            <button id="loadEpisodeBtn">Load</button>
+        </div>
 
-      <iframe id="playerFrame" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        <iframe id="playerFrame" allowfullscreen></iframe>
 
-      <div style="display:flex;gap:8px;margin-top:10px;">
-        <button id="nextEpBtn" class="secondary hidden">Next Episode ⏭</button>
-        <button id="copyUrl" class="secondary">Copy Embed URL</button>
-      </div>
-
-      <pre id="debugLog" class="debug"></pre>
+        <div class="debug-box">
+            <pre id="debugLog"></pre>
+        </div>
     </div>
-  </div>
+</div>
+
+<footer class="footer">
+    This product uses the TMDB API but is not endorsed or certified by TMDB.
+</footer>
 
 <script src="app.js"></script>
 </body>
