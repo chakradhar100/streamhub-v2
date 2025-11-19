@@ -1,47 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamHub V10 FIXED</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StreamHub — No-API Version</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header>
-    <h1>🎬 StreamHub V10</h1>
-    <div class="search-box">
-        <input id="searchInput" type="text" placeholder="Search movie or series...">
-        <button onclick="searchMovie()">Search</button>
+  <header class="topbar">
+    <div class="brand">StreamHub</div>
+    <div class="controls">
+      <input id="searchInput" placeholder="Search movies & TV (type ≥ 2 chars)" />
+      <button id="searchBtn">Search</button>
     </div>
-</header>
+  </header>
 
-<div id="results" class="grid"></div>
+  <main id="main">
+    <section class="section">
+      <h2 class="section-title">Samples</h2>
+      <div id="samples" class="row-strip"></div>
+    </section>
 
-<!-- Player Modal -->
-<div id="playerModal" class="modal hidden">
-    <div class="modal-content">
-        <span class="close" onclick="closePlayer()">&times;</span>
+    <section class="section">
+      <h2 class="section-title">Search Results</h2>
+      <div id="results" class="row-strip"></div>
+    </section>
+  </main>
 
-        <h2 id="playerTitle"></h2>
+  <!-- Player modal -->
+  <div id="playerModal" class="modal hidden">
+    <div class="modal-card">
+      <button id="closePlayer" class="close">✕</button>
+      <h3 id="playerTitle">Player</h3>
 
-        <div id="episodeControls" class="episode-controls hidden">
-            <label>Season:</label>
-            <input type="number" id="seasonInput" min="1" value="1">
+      <div id="tvControls" class="tv-controls hidden">
+        Season <input id="seasonInput" type="number" min="1" value="1" />
+        Episode <input id="episodeInput" type="number" min="1" value="1" />
+        <button id="loadEpisodeBtn">Load</button>
+      </div>
 
-            <label>Episode:</label>
-            <input type="number" id="episodeInput" min="1" value="1">
+      <iframe id="playerFrame" allowfullscreen referrerpolicy="no-referrer"></iframe>
 
-            <button onclick="updateEpisode()">Load</button>
-        </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button id="nextEpBtn" class="secondary hidden">Next Episode ⏭</button>
+        <button id="copyUrl" class="secondary">Copy Embed URL</button>
+      </div>
 
-        <iframe id="playerFrame" allowfullscreen></iframe>
-
-        <button id="nextBtn" class="next-btn hidden" onclick="nextEpisode()">Next Episode ⏭</button>
-
-        <pre id="debugLog" class="debug-box"></pre>
+      <pre id="debugLog" class="debug"></pre>
     </div>
-</div>
+  </div>
 
 <script src="app.js"></script>
 </body>

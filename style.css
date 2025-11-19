@@ -1,132 +1,31 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1c1f26, #15161a);
-    color: white;
+:root{
+  --bg:#06060a; --card:#0f1218; --muted:#9aa0b2; --accent:#ff4d90;
 }
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#04040a,#070712);color:#e9eef8}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.brand{font-weight:700}
+.controls{display:flex;gap:8px;align-items:center}
+.controls input{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+.controls button{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:white;cursor:pointer}
 
-header {
-    text-align: center;
-    padding: 20px;
-    background: #20232b;
-    box-shadow: 0 0 20px #000;
-}
+main{padding:18px}
+.section{margin-bottom:24px}
+.section-title{margin:0 0 12px;color:var(--muted)}
 
-h1 {
-    margin: 0;
-    color: #ff9f1c;
-    font-size: 32px;
-}
+.row-strip{display:flex;gap:12px;overflow:auto;padding-bottom:6px}
+.card{min-width:180px;background:var(--card);border-radius:8px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,0.02);transition:transform .15s}
+.card:hover{transform:translateY(-6px)}
+.poster{width:100%;height:120px;object-fit:cover;display:block}
+.meta{padding:8px;font-size:13px}
 
-.search-box {
-    margin-top: 15px;
-}
-
-.search-box input {
-    padding: 10px;
-    width: 260px;
-    border-radius: 10px;
-    border: none;
-}
-
-button {
-    padding: 10px 15px;
-    border-radius: 8px;
-    background: #ff9f1c;
-    color: black;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.grid {
-    padding: 20px;
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-}
-
-.card {
-    background: #2c3038;
-    padding: 10px;
-    border-radius: 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: scale(1.05);
-    background: #3d414b;
-}
-
-.card img {
-    width: 100%;
-    height: 230px;
-    border-radius: 10px;
-    object-fit: cover;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.modal-content {
-    background: #22252d;
-    padding: 20px;
-    border-radius: 12px;
-    width: 80%;
-    max-width: 800px;
-    text-align: center;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    right: 15px;
-    top: 5px;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-iframe {
-    width: 100%;
-    height: 400px;
-    margin-top: 15px;
-    border-radius: 10px;
-    border: none;
-}
-
-.episode-controls input {
-    width: 60px;
-    margin: 5px;
-    padding: 5px;
-    border-radius: 6px;
-}
-
-.next-btn {
-    margin-top: 10px;
-}
-
-.debug-box {
-    background: #000;
-    color: #33ff99;
-    padding: 10px;
-    margin-top: 20px;
-    text-align: left;
-    border-radius: 10px;
-    font-size: 12px;
-}
+/* modal */
+.modal{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,0.6);z-index:80}
+.hidden{display:none}
+.modal-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:10px;width:90%;max-width:900px;position:relative}
+.close{position:absolute;right:12px;top:8px;background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+#playerFrame{width:100%;height:60vh;border-radius:8px;border:0;margin-top:10px}
+.tv-controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:6px 10px;border-radius:8px}
+.debug{background:#0b0b0b;color:#6fffb0;padding:10px;margin-top:10px;border-radius:8px;max-height:160px;overflow:auto;font-size:13px}
+@media(max-width:700px){.poster{height:140px}#playerFrame{height:48vh}}
