@@ -29,7 +29,7 @@ async function fetchJSON(url) {
     }
 }
 
-// ===== Popular Movies =====
+// ===== Populate Movies =====
 async function loadPopularMovies() {
     const data = await fetchJSON(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
     if (!data) return;
@@ -37,22 +37,23 @@ async function loadPopularMovies() {
     popularMoviesDiv.innerHTML = '';
 
     data.results.forEach(movie => {
-        const imgSrc = movie.poster_path
-            ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-            : 'fallback.png';
-
         const movieEl = document.createElement('div');
         movieEl.classList.add('movie-item');
+
+        // Keep card visuals with innerHTML
         movieEl.innerHTML = `
-            <img src="${imgSrc}" alt="${movie.title}" onerror="this.src='fallback.png'">
+            <img src="${movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'fallback.png'}" alt="${movie.title}" onerror="this.src='fallback.png'">
             <h4>${movie.title}</h4>
         `;
-        movieEl.onclick = () => openMovie(movie.id);
+
+        // Make clickable
+        movieEl.addEventListener('click', () => openMovie(movie.id));
+
         popularMoviesDiv.appendChild(movieEl);
     });
 }
 
-// ===== Popular TV Shows =====
+// ===== Populate TV Shows =====
 async function loadPopularTV() {
     const data = await fetchJSON(`${BASE_URL}/tv/popular?api_key=${API_KEY}&language=en-US&page=1`);
     if (!data) return;
@@ -60,17 +61,16 @@ async function loadPopularTV() {
     popularTVDiv.innerHTML = '';
 
     data.results.forEach(tv => {
-        const imgSrc = tv.poster_path
-            ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
-            : 'fallback.png';
-
         const tvEl = document.createElement('div');
         tvEl.classList.add('tv-item');
+
         tvEl.innerHTML = `
-            <img src="${imgSrc}" alt="${tv.name}" onerror="this.src='fallback.png'">
+            <img src="${tv.poster_path ? 'https://image.tmdb.org/t/p/w300' + tv.poster_path : 'fallback.png'}" alt="${tv.name}" onerror="this.src='fallback.png'">
             <h4>${tv.name}</h4>
         `;
-        tvEl.onclick = () => openTV(tv.id);
+
+        tvEl.addEventListener('click', () => openTV(tv.id));
+
         popularTVDiv.appendChild(tvEl);
     });
 }
@@ -98,7 +98,6 @@ async function openTV(tvId) {
     const seasonNumber = 1;
     const episodeNumber = 1;
 
-    // Fetch episode info
     const epData = await fetchJSON(`${BASE_URL}/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}?api_key=${API_KEY}`);
     if (!epData) return;
 
@@ -127,28 +126,27 @@ function loadPlayer(imdbId) {
 // ===== Search =====
 async function search(query) {
     if (!query) return;
+
     const data = await fetchJSON(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
     if (!data) return;
 
     searchResultsDiv.innerHTML = '';
 
     data.results.forEach(item => {
-        const title = item.title || item.name || 'Unknown';
-        const imgSrc = item.poster_path
-            ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
-            : 'fallback.png';
+        if (item.media_type === 'person') return; // skip persons
 
         const el = document.createElement('div');
         el.classList.add('search-item');
+
         el.innerHTML = `
-            <img src="${imgSrc}" alt="${title}" onerror="this.src='fallback.png'">
-            <h4>${title}</h4>
+            <img src="${item.poster_path ? 'https://image.tmdb.org/t/p/w300' + item.poster_path : 'fallback.png'}" alt="${item.title || item.name}" onerror="this.src='fallback.png'">
+            <h4>${item.title || item.name || 'Unknown'}</h4>
         `;
 
-        el.onclick = () => {
+        el.addEventListener('click', () => {
             if (item.media_type === 'movie') openMovie(item.id);
             else if (item.media_type === 'tv') openTV(item.id);
-        };
+        });
 
         searchResultsDiv.appendChild(el);
     });
