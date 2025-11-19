@@ -1,75 +1,44 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StreamHub v4</title>
-  <link rel="stylesheet" href="style.css" />
+<!doctype html><html><head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='width=device-width,initial-scale=1'/>
+<title>StreamHub v5</title>
+<link rel='stylesheet' href='style.css'/>
 </head>
 <body>
 
-<!-- Profiles Screen -->
-<div id="profilesScreen" class="center-screen">
-  <div class="profiles-box">
-    <h2>Who's watching?</h2>
-    <div id="profilesList" class="profiles-list"></div>
-    <div class="profile-actions">
-      <input id="newProfileName" placeholder="Add profile name" />
-      <button id="addProfileBtn">Add Profile</button>
-    </div>
-  </div>
+<header class='main-header'>
+ <h1 class='brand'>StreamHub</h1>
+ <div class='right'>
+   <input id='search' placeholder='Search...'>
+ </div>
+</header>
+
+<section class='hero'>
+ <div class='hero-content'>
+   <h2 id='heroTitle'>Featured</h2>
+   <p id='heroDesc'></p>
+   <div class='hero-actions'>
+     <button id='heroPlay' class='btn'>Play</button>
+   </div>
+ </div>
+ <div class='hero-media'>
+   <img id='heroPoster' src=''/>
+ </div>
+</section>
+
+<div id='rows'></div>
+
+<section>
+  <div class='section-title'>Continue Watching</div>
+  <div id='continueRow' class='video-row'></div>
+</section>
+
+<div id='playerModal' class='modal'>
+ <div class='modal-content'>
+  <button id='closePlayer' class='close'>&times;</button>
+  <video id='player' controls></video>
+ </div>
 </div>
 
-<!-- Main App -->
-<div id="app" class="hide">
-  <header class="main-header">
-    <div class="left">
-      <h1 class="brand">StreamHub</h1>
-      <div id="profileSwitcher" class="profile-switcher"></div>
-    </div>
-
-    <div class="right">
-      <input id="search" placeholder="Search shows, movies..." />
-      <button id="signoutBtn" class="btn">Sign out</button>
-    </div>
-  </header>
-
-  <main>
-    <section id="hero" class="hero">
-      <div id="heroContent" class="hero-content">
-        <h2 id="heroTitle">Featured</h2>
-        <p id="heroDesc"></p>
-        <div class="hero-actions">
-          <button id="heroPlay" class="btn primary">Play</button>
-          <button id="heroAdd" class="btn">+ Watchlist</button>
-        </div>
-      </div>
-      <div class="hero-media">
-        <img id="heroPoster" src="" alt="hero poster" />
-      </div>
-    </section>
-
-    <section id="rows"></section>
-
-    <section id="continueSection">
-      <div class="section-title">Continue Watching</div>
-      <div id="continueRow" class="video-row"></div>
-    </section>
-  </main>
-</div>
-
-<!-- Player Modal -->
-<div id="playerModal" class="modal">
-  <div class="modal-content">
-    <button id="closePlayer" class="close">&times;</button>
-    <div class="player-stage">
-      <video id="player" controls></video>
-      <div id="episodeList" class="episode-list"></div>
-    </div>
-    <button id="toggleWL" class="btn wl">+ Watchlist</button>
-  </div>
-</div>
-
-<script src="app.js"></script>
-</body>
-</html>
+<script src='app.js'></script>
+</body></html>
