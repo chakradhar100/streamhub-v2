@@ -1,5 +1,5 @@
-const OMDB_KEY = "https://www.omdbapi.com/?apikey=564727fa&s=";
-const OMDB_DETAILS = "https://www.omdbapi.com/?apikey=564727fa&i=";
+const OMDB_KEY = "https://www.omdbapi.com/?apikey=dd7ffe53&s=";
+const OMDB_DETAILS = "https://www.omdbapi.com/?apikey=dd7ffe53&i=";
 const TMDB_KEY = "de0c5cddca718ef54bb93e78bce0d674";
 
 async function searchMovie() {
