@@ -1,0 +1,64 @@
+{
+  "featured": {
+    "id": "feat1",
+    "title": "Voyage Through Space",
+    "desc": "A short featured documentary about space exploration.",
+    "poster": "https://placehold.co/600x340",
+    "video": "videos/sample1.mp4"
+  },
+  "rows": [
+    {
+      "title": "Top Picks",
+      "items": [
+        {
+          "id": "m1",
+          "title": "Nature Documentary",
+          "poster": "https://placehold.co/400x220",
+          "preview": "videos/preview1.mp4",
+          "video": "videos/sample2.mp4",
+          "duration": 600
+        },
+        {
+          "id": "s1",
+          "title": "Sci-Fi Series",
+          "poster": "https://placehold.co/400x220",
+          "season": 1,
+          "episodes": [
+            {
+              "number": 1,
+              "title": "Pilot",
+              "video": "videos/sample3.mp4",
+              "duration": 300
+            },
+            {
+              "number": 2,
+              "title": "Into Orbit",
+              "video": "videos/sample4.mp4",
+              "duration": 320
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "New Releases",
+      "items": [
+        {
+          "id": "m2",
+          "title": "Action Short",
+          "poster": "https://placehold.co/400x220",
+          "video": "videos/sample5.mp4",
+          "preview": "videos/preview2.mp4",
+          "duration": 200
+        },
+        {
+          "id": "m3",
+          "title": "Comedy Clip",
+          "poster": "https://placehold.co/400x220",
+          "video": "videos/sample6.mp4",
+          "duration": 140
+        }
+      ]
+    }
+  ]
+}
