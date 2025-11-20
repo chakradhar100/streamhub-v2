@@ -2,26 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>StreamHub Player</title>
   <style>
-    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:Inter,system-ui,Arial}
-    .player-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;gap:18px}
-    .player-frame{width:min(1100px,98%);height:640px;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-    .meta{max-width:1100px;width:98%;color:#9fb3d9}
-    .small{font-size:13px;color:#9fb3d9}
-    @media (max-width:860px){ .player-frame{height:360px} }
+    html,body{
+      height:100%;margin:0;background:#000;color:#fff;
+      font-family:Inter,system-ui,Arial;
+    }
+
+    .topbar{
+      width:100%;
+      display:flex;
+      align-items:center;
+      background:#0c0c0c;
+      padding:12px 16px;
+      box-shadow:0 2px 10px rgba(0,0,0,.4);
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .back-btn{
+      background:#ff6a2b;
+      color:#fff;
+      padding:8px 14px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+      margin-right:12px;
+    }
+
+    .back-btn:hover{
+      background:#e55a1e;
+    }
+
+    .player-wrap{
+      min-height:calc(100vh - 60px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:18px;
+      gap:18px;
+    }
+
+    .player-frame{
+      width:min(1100px,98%);
+      height:640px;
+      background:#000;
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+    }
+
+    #meta{
+      max-width:1100px;
+      width:98%;
+      color:#9fb3d9;
+      padding-left:4px;
+    }
+
+    .small{
+      font-size:13px;
+      color:#9fb3d9;
+    }
+
+    @media (max-width:860px){
+      .player-frame{height:360px}
+    }
   </style>
 </head>
 <body>
+
+  <div class="topbar">
+    <button class="back-btn" onclick="window.location.href='index.html'">← Back to Home</button>
+    <div style="font-size:16px;opacity:.8;">StreamHub Player</div>
+  </div>
+
   <div class="player-wrap">
     <div id="meta" class="meta"></div>
     <div id="frame" class="player-frame">Loading player…</div>
-    <div class="small">If the embed fails, check the IMDB param or try a different episode.</div>
+    <div class="small">If the stream fails, try switching episode or season.</div>
   </div>
 
 <script>
-  // parse query params
+  // Parse query params
   function qp() {
     const u = new URL(window.location.href);
     const p = {};
@@ -32,28 +98,48 @@
   const frame = document.getElementById('frame');
   const meta = document.getElementById('meta');
 
-  // expected params:
-  // imdb (required), type (movie|tv), s (season), e (episode)
   const imdb = params.imdb;
   const type = params.type || 'movie';
-  const s = params.s || '';
-  const e = params.e || '';
+  const s = params.s;
+  const e = params.e;
 
   if (!imdb) {
-    frame.innerHTML = '<div style="padding:20px;color:#f88">No imdb param provided.</div>';
+    frame.innerHTML = '<div style="padding:20px;color:#f88">Missing IMDB ID.</div>';
   } else {
-    meta.innerHTML = `<strong>IMDB:</strong> ${imdb} &nbsp; <span class="small">type=${type} ${s?('&season='+s):''} ${e?('&ep='+e):''}</span>`;
-    // build vidsrc embed URL (your original player)
+    meta.innerHTML =
+      `<strong>IMDB:</strong> ${imdb} 
+       <span class="small">
+        &nbsp; • ${type.toUpperCase()} 
+        ${s ? ` • Season ${s}` : ''} 
+        ${e ? ` • Episode ${e}` : ''}
+      </span>`;
+
+    // Build vidsrc URL
     let src = '';
     if (type === 'tv') {
-      const ss = s || 1;
-      const ee = e || 1;
-      src = `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(ss)}&e=${encodeURIComponent(ee)}`;
+      src = `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s)}&e=${encodeURIComponent(e)}`;
     } else {
       src = `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`;
     }
-    frame.innerHTML = `<iframe src="${src}" frameborder="0" width="100%" height="100%" allowfullscreen></iframe>`;
+
+    frame.innerHTML = `
+      <iframe 
+        src="${src}"
+        frameborder="0"
+        width="100%" height="100%"
+        allowfullscreen
+        sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-orientation-lock allow-top-navigation-by-user-activation">
+      </iframe>
+    `;
   }
+
+  /*
+    ⚠️ Important:
+    We cannot "block" popups INSIDE the iframe when the host triggers them,
+    BUT we CAN prevent them from opening new tabs by disabling window.open.
+  */
+  window.open = function(){ console.log("Popup blocked."); return null; };
 </script>
+
 </body>
 </html>
