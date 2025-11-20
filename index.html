@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StreamHub v3 — Material Stream (Stable)</title>
+  <title>StreamHub — Premium</title>
+  <meta name="description" content="StreamHub — premium material streaming UI (TMDB optional)">
   <link rel="stylesheet" href="style.css">
-  <meta name="description" content="StreamHub v3 — material-styled streaming UI demo (TMDB optional) - optimized & stable">
   <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
 </head>
 <body>
@@ -13,50 +13,50 @@
     <div class="brand">
       <div class="logo" aria-hidden="true"></div>
       <h1>StreamHub</h1>
-      <span class="badge">v3</span>
+      <span class="badge">Premium</span>
     </div>
-
     <div class="controls">
-      <div class="searchbox" role="search">
-        <input id="search-input" aria-label="Search movies or TV" placeholder="Search movies, TV shows, people..." />
-        <button id="search-btn" aria-label="Search">Search</button>
+      <div class="searchbox" role="search" aria-label="Search">
+        <input id="searchInput" placeholder="Search movies & TV (press Enter)" />
+        <button id="searchButton" aria-label="Search">Search</button>
       </div>
-      <button id="themeBtn" aria-pressed="false" title="Toggle theme">🌗</button>
+      <button id="themeBtn" title="Toggle theme">🌗</button>
     </div>
   </header>
 
   <main class="container">
-    <section id="hero" class="hero-card">
-      <div id="heroContent" class="hero-inner">
+    <section class="hero-card">
+      <div class="hero-inner">
         <div class="hero-meta">
           <h2 id="heroTitle">Featured</h2>
-          <p id="heroDesc">A polished demo experience — click posters to open details, trailer, or open the player page.</p>
+          <p id="heroDesc">Hand-picked premium selections. Click any poster to view details, trailer or play.</p>
           <div class="hero-actions">
             <button id="heroPlayBtn">Play</button>
-            <button id="heroMoreBtn">More info</button>
+            <button id="heroMoreBtn">Details</button>
           </div>
         </div>
-        <img id="heroPoster" class="hero-poster" alt="featured poster" src="" data-src="" loading="lazy"/>
+        <img id="heroPoster" class="hero-poster" alt="featured poster" src="" loading="lazy" />
       </div>
     </section>
 
-    <section id="rows"></section>
+    <section id="rows" aria-live="polite"></section>
 
-    <section id="search-results-section" class="card-section" hidden>
-      <h3>Search results</h3>
-      <div id="search-results" class="row-grid"></div>
+    <section id="searchArea" class="card-section" hidden>
+      <div class="row-title"><h3>Search results</h3></div>
+      <div id="searchResults" class="row-grid"></div>
     </section>
 
     <footer class="footer">
-      <div>Built with ❤️ · Material StreamHub v3 (Stable)</div>
-      <div class="small">TMDB optionally supported (set API key in app.js)</div>
+      <div>Built with ❤️ · StreamHub Premium</div>
+      <div class="small">TMDB optional — set API key in app.js</div>
     </footer>
   </main>
 
+  <!-- Modal (minimal) -->
   <div id="modal" class="modal" aria-hidden="true">
     <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
-      <div class="modal-body" id="modalBody"></div>
+      <button class="modal-close" aria-label="Close">✕</button>
+      <div id="modalBody"></div>
     </div>
   </div>
 
