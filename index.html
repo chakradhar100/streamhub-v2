@@ -1,41 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamHub v2</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StreamHub v3 — Material Stream</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="StreamHub v3 — material-styled streaming UI demo (TMDB optional)">
 </head>
 <body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="logo" src="fallback.png" alt="StreamHub logo" onerror="this.style.display='none'">
+      <h1>StreamHub</h1>
+      <span class="badge">v3</span>
+    </div>
 
-    <header>
-        <h1>StreamHub v2</h1>
-    </header>
+    <div class="controls">
+      <div class="searchbox" role="search">
+        <input id="search-input" aria-label="Search movies or TV" placeholder="Search movies, TV shows, people..." />
+        <button id="search-btn" aria-label="Search">Search</button>
+      </div>
+      <button id="themeBtn" aria-pressed="false" title="Toggle theme">🌗</button>
+    </div>
+  </header>
 
-    <section id="search-section">
-        <input type="text" id="search-input" placeholder="Search movies or TV shows...">
-        <button id="search-btn">Search</button>
+  <main class="container">
+    <section id="hero" class="hero-card">
+      <div id="heroContent" class="hero-inner">
+        <div class="hero-meta">
+          <h2 id="heroTitle">Featured</h2>
+          <p id="heroDesc">A beautiful demo experience — click posters below to open detail panels and play trailers.</p>
+          <div class="hero-actions">
+            <button id="heroPlayBtn">Play</button>
+            <button id="heroMoreBtn">More info</button>
+          </div>
+        </div>
+        <img id="heroPoster" class="hero-poster" alt="featured poster" src="" />
+      </div>
     </section>
 
-    <section id="popular-movies-section">
-        <h2>Popular Movies</h2>
-        <div id="popular-movies" class="grid-container"></div>
+    <section id="rows">
+      <!-- JS will inject rows here -->
     </section>
 
-    <section id="popular-tv-section">
-        <h2>Popular TV Shows</h2>
-        <div id="popular-tv" class="grid-container"></div>
+    <section id="search-results-section" class="card-section" hidden>
+      <h3>Search results</h3>
+      <div id="search-results" class="row-grid"></div>
     </section>
 
-    <section id="search-results-section">
-        <h2>Search Results</h2>
-        <div id="search-results" class="grid-container"></div>
-    </section>
+    <footer class="footer">
+      <div>Built with ❤️ · Material StreamHub v3</div>
+      <div class="small">TMDB optionally supported (set API key in app.js)</div>
+    </footer>
+  </main>
 
-    <section id="player-section">
-        <h2>Player</h2>
-        <div id="player"></div>
-        <button id="loadEpisodeBtn">Reload Player</button>
-    </section>
+  <!-- Modal / drawer -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <div class="modal-body" id="modalBody">
+        <!-- details injected -->
+      </div>
+    </div>
+  </div>
 
-    <script src="
+<script src="app.js"></script>
+</body>
+</html>
