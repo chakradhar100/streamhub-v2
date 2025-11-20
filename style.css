@@ -30,7 +30,6 @@ body{
 .material-btn.small{padding:6px 10px;font-size:13px;border-radius:10px}
 .material-btn.filled{background:linear-gradient(180deg,var(--accent),#ff4f07);color:#fff;box-shadow:0 10px 30px rgba(255,106,43,0.14)}
 .icon-btn{background:transparent;border:0;color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
-.material-btn:active::after, .material-btn:focus::after{}
 
 /* ripple effect */
 .material-btn::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);width:250px;height:250px;background:rgba(255,255,255,0.06);border-radius:50%;transition:transform .5s, opacity .8s;opacity:0}
