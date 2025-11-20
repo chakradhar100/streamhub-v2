@@ -4,15 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>StreamHub — Premium</title>
-  <meta name="description" content="StreamHub — premium material streaming UI (TMDB optional)">
+  <meta name="description" content="StreamHub — premium streaming UI">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <div class="logo" aria-hidden="true"></div>
-      <h1>StreamHub</h1>
+      <div class="logo" aria-hidden="true" style="cursor:pointer"></div>
+      <h1 style="cursor:pointer">StreamHub</h1>
       <span class="badge">Premium</span>
     </div>
     <div class="controls">
@@ -25,11 +25,13 @@
   </header>
 
   <main class="container">
+
+    <!-- HERO -->
     <section class="hero-card">
       <div class="hero-inner">
         <div class="hero-meta">
           <h2 id="heroTitle">Featured</h2>
-          <p id="heroDesc">Hand-picked premium selections. Click any poster to view details, trailer or play.</p>
+          <p id="heroDesc">Premium picks — explore posters below.</p>
           <div class="hero-actions">
             <button id="heroPlayBtn" class="material-btn filled">Play</button>
             <button id="heroMoreBtn" class="material-btn">Details</button>
@@ -39,41 +41,41 @@
       </div>
     </section>
 
+    <!-- HOMEPAGE ROWS -->
     <section id="rows" aria-live="polite"></section>
 
+    <!-- SEARCH RESULTS -->
     <section id="searchArea" class="card-section" hidden>
       <div class="row-title"><h3>Search results</h3></div>
       <div id="searchResults" class="row-grid"></div>
     </section>
 
     <footer class="footer">
-      <div>Built with ❤️ · StreamHub Premium</div>
-      <div class="small">TMDB optional — set API key in app.js</div>
+      <div>StreamHub Premium</div>
+      <div class="small">TMDB Enabled</div>
     </footer>
   </main>
 
-  <!-- Modal (minimal) -->
+  <!-- MODAL -->
   <div id="modal" class="modal" aria-hidden="true">
-    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close" aria-label="Close">✕</button>
+    <div class="modal-sheet">
+      <button class="modal-close">✕</button>
       <div id="modalBody"></div>
     </div>
   </div>
 
-  <!-- Floating overlay player (80% size) -->
+  <!-- FLOATING VIDEO OVERLAY -->
   <div id="videoOverlay" class="video-overlay" aria-hidden="true">
-    <div class="video-sheet" role="dialog" aria-modal="true">
+    <div class="video-sheet">
       <div class="video-header">
         <div id="videoTitle">Player</div>
         <div class="video-controls">
-          <button id="btnMaximize" class="icon-btn" title="Maximize">⤢</button>
+          <button id="btnMaximize" class="icon-btn">⤢</button>
           <button id="btnOpenFull" class="material-btn small">Open full page</button>
-          <button id="btnCloseOverlay" class="icon-btn" title="Close">✕</button>
+          <button id="btnCloseOverlay" class="icon-btn">✕</button>
         </div>
       </div>
-      <div id="videoFrameWrap" class="video-frame-wrap">
-        <!-- iframe inserted here -->
-      </div>
+      <div id="videoFrameWrap" class="video-frame-wrap"></div>
       <div id="videoInfo" class="video-info"></div>
     </div>
   </div>
