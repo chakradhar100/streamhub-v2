@@ -1,4 +1,4 @@
-/* StreamHub — Premium styles */
+/* StreamHub — Premium styles (updated for material buttons + floating player) */
 :root{
   --bg:#060710; --card:#0e1620; --muted:#9fb3d9; --accent:#ff6a2b;
   --glass: rgba(255,255,255,0.03);
@@ -25,6 +25,17 @@ body{
 #searchInput{border:0;background:transparent;color:inherit;padding:8px 12px;width:300px;outline:none}
 #searchButton{background:var(--accent);border:0;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
 
+/* Material-ish buttons */
+.material-btn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:0;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));color:var(--text);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.45);overflow:hidden}
+.material-btn.small{padding:6px 10px;font-size:13px;border-radius:10px}
+.material-btn.filled{background:linear-gradient(180deg,var(--accent),#ff4f07);color:#fff;box-shadow:0 10px 30px rgba(255,106,43,0.14)}
+.icon-btn{background:transparent;border:0;color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+.material-btn:active::after, .material-btn:focus::after{}
+
+/* ripple effect */
+.material-btn::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);width:250px;height:250px;background:rgba(255,255,255,0.06);border-radius:50%;transition:transform .5s, opacity .8s;opacity:0}
+.material-btn:active::after{transform:translate(-50%,-50%) scale(1);opacity:1;transition:transform 0s}
+
 /* Main container */
 .container{max-width:var(--max-width);margin:20px auto;padding:0 18px}
 
@@ -35,8 +46,6 @@ body{
 .hero-meta h2{margin:0 0 8px 0;font-size:22px}
 .hero-meta p{margin:0;color:var(--muted)}
 .hero-actions{display:flex;gap:8px;margin-top:12px}
-.hero-actions button{padding:10px 14px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:inherit;cursor:pointer}
-.hero-actions button:first-child{background:var(--accent);color:#fff}
 
 /* hero poster */
 .hero-poster{width:240px;height:140px;border-radius:12px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.6)}
@@ -65,14 +74,23 @@ body{
 .modal[aria-hidden="false"]{display:flex;background:rgba(2,6,23,0.6);backdrop-filter:blur(6px)}
 .modal-sheet{width:min(980px,96%);background:linear-gradient(180deg,#071224,#04111a);border-radius:14px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,0.7);position:relative}
 .modal-close{position:absolute;right:18px;top:18px;background:transparent;border:0;color:var(--muted);font-size:20px;cursor:pointer}
-
-/* modal minimal layout */
 .modal-body{display:flex;gap:18px}
 .modal-body img.poster{width:240px;height:auto;border-radius:8px}
 .modal-body .info{flex:1}
 
 /* footer */
 .footer{display:flex;justify-content:space-between;gap:12px;padding:16px;margin-top:28px;border-top:1px solid rgba(255,255,255,.02);color:var(--muted);font-size:13px}
+
+/* floating overlay player */
+.video-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:120;background:rgba(2,6,23,0.7);backdrop-filter:blur(6px)}
+.video-overlay[aria-hidden="false"]{display:flex}
+.video-sheet{width:80vw;height:80vh;background:#000;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 120px rgba(0,0,0,0.7)}
+.video-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+.video-header #videoTitle{font-weight:700}
+.video-controls{display:flex;gap:10px;align-items:center}
+.video-frame-wrap{flex:1;background:#000;display:flex;align-items:center;justify-content:center}
+.video-frame-wrap iframe{width:100%;height:100%;border:0}
+.video-info{padding:10px;color:var(--muted);font-size:13px}
 
 /* responsive */
 @media (max-width:860px){
@@ -82,4 +100,5 @@ body{
   .poster{height:180px}
   .modal-body{flex-direction:column;align-items:center}
   .modal-body img.poster{width:60%;height:auto}
+  .video-sheet{width:96vw;height:70vh}
 }

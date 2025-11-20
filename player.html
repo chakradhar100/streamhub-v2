@@ -45,26 +45,26 @@
   const type = params.type || 'movie';
   const s = params.s;
   const e = params.e;
+  const embedParam = params.embed; // direct embed URL (used by overlay maximize)
   const frame = document.getElementById('frame');
   const meta = document.getElementById('meta');
   const urlInfo = document.getElementById('urlInfo');
   const mirrorArea = document.getElementById('mirrorArea');
   const loadBtn = document.getElementById('loadBtn');
 
-  if (!imdb) { frame.innerHTML = '<div style="padding:20px;color:#f88">Missing IMDB ID.</div>'; }
-  meta.innerHTML = `<strong>IMDB:</strong> ${imdb} <span class="small">&nbsp;• ${type.toUpperCase()} ${s?`• S${s}`:''} ${e?`• E${e}`:''}</span>`;
+  meta.innerHTML = `<strong>Embed:</strong> ${embedParam ? 'Direct embed' : (imdb ? imdb : 'none')} <span class="small">&nbsp;• ${type.toUpperCase()} ${s?`• S${s}`:''} ${e?`• E${e}`:''}</span>`;
 
-  const primarySrc = imdb ? (type === 'tv' ? `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}` : `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`) : '';
+  const primarySrc = embedParam ? embedParam : (imdb ? (type === 'tv' ? `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}` : `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`) : '');
 
   const mirrors = imdb ? [
     primarySrc,
     `https://vidsrc.me/embed/${type === 'tv' ? 'tv' : 'movie'}?imdb=${encodeURIComponent(imdb)}${type==='tv'?`&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}`:''}`,
     `https://vidsrc.to/embed/${type === 'tv' ? 'tv' : 'movie'}?imdb=${encodeURIComponent(imdb)}${type==='tv'?`&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}`:''}`
-  ] : [];
+  ] : (embedParam ? [embedParam] : []);
 
   loadBtn.onclick = function() {
     if (!primarySrc) { frame.innerHTML = '<div style="padding:20px;color:#f88">No player URL.</div>'; return; }
-    frame.innerHTML = `<iframe src="${primarySrc}" frameborder="0" width="100%" height="100%" allowfullscreen></iframe>`;
+    frame.innerHTML = `<iframe src="${primarySrc}" frameborder="0" width="100%" height="100%" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
     setTimeout(()=> revealURL(primarySrc), 500);
   };
 
@@ -81,8 +81,6 @@
       mirrorArea.appendChild(a);
     });
   }
-
-  window.open = function(){ console.log("Popup blocked."); return null; };
 </script>
 </body>
 </html>
