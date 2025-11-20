@@ -1,6 +1,6 @@
 /* ========= CONFIG ========= */
 const USE_TMDB = true;           // Set false to use mock (fallback)
-const TMDB_KEY = "";             // Optional: your TMDB key here
+const TMDB_KEY = "1c161f19e296f253fed30df0a8bd7d93";             // Optional: your TMDB key here
 const API_BASE = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/w342";
 
