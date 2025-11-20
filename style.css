@@ -1,4 +1,4 @@
-/* Material-inspired StreamHub v3 */
+/* Material-inspired StreamHub v3 (optimized) */
 /* Base */
 :root{
   --bg:#0b1016; --card:#0f1720; --muted:#9fb3d9; --accent:#ff6a2b;
@@ -95,10 +95,4 @@ body{
   .modal-body{flex-direction:column}
   .modal-body .md-left{width:100%}
   .player-embed{height:260px}
-}
-@media (max-width:480px){
-  .topbar{flex-direction:column;align-items:flex-start}
-  .controls{width:100%;justify-content:space-between}
-  .hero-poster{height:180px}
-  .poster{height:150px}
 }

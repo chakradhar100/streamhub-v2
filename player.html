@@ -2,75 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>StreamHub Player</title>
   <style>
-    html,body{
-      height:100%;margin:0;background:#000;color:#fff;
-      font-family:Inter,system-ui,Arial;
-    }
-
-    .topbar{
-      width:100%;
-      display:flex;
-      align-items:center;
-      background:#0c0c0c;
-      padding:12px 16px;
-      box-shadow:0 2px 10px rgba(0,0,0,.4);
-      position:sticky;
-      top:0;
-      z-index:20;
-    }
-
-    .back-btn{
-      background:#ff6a2b;
-      color:#fff;
-      padding:8px 14px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:600;
-      margin-right:12px;
-    }
-
-    .back-btn:hover{
-      background:#e55a1e;
-    }
-
-    .player-wrap{
-      min-height:calc(100vh - 60px);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      padding:18px;
-      gap:18px;
-    }
-
-    .player-frame{
-      width:min(1100px,98%);
-      height:640px;
-      background:#000;
-      border-radius:8px;
-      overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,.6);
-    }
-
-    #meta{
-      max-width:1100px;
-      width:98%;
-      color:#9fb3d9;
-      padding-left:4px;
-    }
-
-    .small{
-      font-size:13px;
-      color:#9fb3d9;
-    }
-
-    @media (max-width:860px){
-      .player-frame{height:360px}
-    }
+    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:Inter,system-ui,Arial}
+    .topbar{width:100%;display:flex;align-items:center;background:#0c0c0c;padding:12px 16px;box-shadow:0 2px 10px rgba(0,0,0,.4);position:sticky;top:0;z-index:20}
+    .back-btn{background:#ff6a2b;color:#fff;padding:8px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;margin-right:12px}
+    .player-wrap{min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;gap:18px}
+    .player-frame{width:min(1100px,98%);height:640px;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+    #meta{max-width:1100px;width:98%;color:#9fb3d9;padding-left:4px}
+    .small{font-size:13px;color:#9fb3d9}
+    @media (max-width:860px){ .player-frame{height:360px} }
+    .load-btn{background:#ff6a2b;border:0;padding:12px 18px;color:#fff;border-radius:8px;font-weight:700;cursor:pointer}
   </style>
 </head>
 <body>
@@ -82,12 +25,17 @@
 
   <div class="player-wrap">
     <div id="meta" class="meta"></div>
-    <div id="frame" class="player-frame">Loading player…</div>
-    <div class="small">If the stream fails, try switching episode or season.</div>
+    <div id="frame" class="player-frame">
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;">
+        <div style="margin-bottom:12px;color:#9fb3d9">Player is ready — tap to load (saves data).</div>
+        <button id="loadBtn" class="load-btn">▶ Load Player</button>
+      </div>
+    </div>
+    <div class="small">If the embed fails, try switching episode or season.</div>
   </div>
 
 <script>
-  // Parse query params
+  // parse query params
   function qp() {
     const u = new URL(window.location.href);
     const p = {};
@@ -113,33 +61,18 @@
         ${s ? ` • Season ${s}` : ''} 
         ${e ? ` • Episode ${e}` : ''}
       </span>`;
-
-    // Build vidsrc URL
-    let src = '';
-    if (type === 'tv') {
-      src = `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s)}&e=${encodeURIComponent(e)}`;
-    } else {
-      src = `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`;
-    }
-
-    frame.innerHTML = `
-      <iframe 
-        src="${src}"
-        frameborder="0"
-        width="100%" height="100%"
-        allowfullscreen
-        sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-orientation-lock allow-top-navigation-by-user-activation">
-      </iframe>
-    `;
   }
 
-  /*
-    ⚠️ Important:
-    We cannot "block" popups INSIDE the iframe when the host triggers them,
-    BUT we CAN prevent them from opening new tabs by disabling window.open.
-  */
+  // build the player src (but DO NOT load until user clicks)
+  const src = imdb ? (type === 'tv' ? `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}` : `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`) : '';
+
+  document.getElementById('loadBtn').onclick = function() {
+    if (!src) { frame.innerHTML = '<div style="padding:20px;color:#f88">No player URL.</div>'; return; }
+    frame.innerHTML = `<iframe src="${src}" frameborder="0" width="100%" height="100%" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-orientation-lock allow-top-navigation-by-user-activation"></iframe>`;
+  };
+
+  // prevent popups from embed trying window.open
   window.open = function(){ console.log("Popup blocked."); return null; };
 </script>
-
 </body>
 </html>
