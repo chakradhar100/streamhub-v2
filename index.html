@@ -3,16 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StreamHub v3 — Material Stream (Optimized)</title>
+  <title>StreamHub v3 — Material Stream (Stable)</title>
   <link rel="stylesheet" href="style.css">
-  <meta name="description" content="StreamHub v3 — material-styled streaming UI demo (TMDB optional) - optimized for low bandwidth">
-  <!-- Preconnect to common CDNs (helps latency, not bandwidth) -->
+  <meta name="description" content="StreamHub v3 — material-styled streaming UI demo (TMDB optional) - optimized & stable">
   <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <img class="logo" src="fallback.png" alt="StreamHub logo" onerror="this.style.display='none'">
+      <div class="logo" aria-hidden="true"></div>
       <h1>StreamHub</h1>
       <span class="badge">v3</span>
     </div>
@@ -31,20 +30,17 @@
       <div id="heroContent" class="hero-inner">
         <div class="hero-meta">
           <h2 id="heroTitle">Featured</h2>
-          <p id="heroDesc">A beautiful demo experience — click posters below to open detail panels and play trailers or open the player page.</p>
+          <p id="heroDesc">A polished demo experience — click posters to open details, trailer, or open the player page.</p>
           <div class="hero-actions">
             <button id="heroPlayBtn">Play</button>
             <button id="heroMoreBtn">More info</button>
           </div>
         </div>
-        <!-- heroPoster uses lazy loading and a low-res placeholder -->
-        <img id="heroPoster" class="hero-poster" alt="featured poster" src="https://placehold.co/60x36/111/fff" data-src="" loading="lazy"/>
+        <img id="heroPoster" class="hero-poster" alt="featured poster" src="" data-src="" loading="lazy"/>
       </div>
     </section>
 
-    <section id="rows">
-      <!-- JS will inject rows here -->
-    </section>
+    <section id="rows"></section>
 
     <section id="search-results-section" class="card-section" hidden>
       <h3>Search results</h3>
@@ -52,22 +48,18 @@
     </section>
 
     <footer class="footer">
-      <div>Built with ❤️ · Material StreamHub v3 (Optimized)</div>
+      <div>Built with ❤️ · Material StreamHub v3 (Stable)</div>
       <div class="small">TMDB optionally supported (set API key in app.js)</div>
     </footer>
   </main>
 
-  <!-- Modal / drawer -->
   <div id="modal" class="modal" aria-hidden="true">
     <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
-      <div class="modal-body" id="modalBody">
-        <!-- details injected by JS -->
-      </div>
+      <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
 
-  <!-- Defer script so HTML paints first -->
   <script defer src="app.js"></script>
 </body>
 </html>
