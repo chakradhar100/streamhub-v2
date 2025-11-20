@@ -1,9 +1,7 @@
-// StreamHub v3 — Material upgrade
-// Drop this as app.js in your repo root (index.html loads it).
-// Set TMDB key to use live data: const TMDB_API_KEY = '<YOUR_KEY>';
-// If left blank, the app uses MOCK_DATA with demo rows.
+// StreamHub v3 — Material upgrade + dedicated player page (Option C)
+// Place this as app.js in repo root. Set TMDB_API_KEY to use live data.
 
-const TMDB_API_KEY = '1c161f19e296f253fed30df0a8bd7d93'; // <- put your TMDB API key here to enable real data
+const TMDB_API_KEY = '1c161f19e296f253fed30df0a8bd7d93'; // <-- set your TMDB API key here to enable live TMDB data
 const MOCK_DATA = !TMDB_API_KEY;
 const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
@@ -24,7 +22,9 @@ const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modalBody');
 const modalClose = document.getElementById('modalClose');
 
-// small demo dataset used when MOCK_DATA==true
+const PLAYER_PAGE = 'player.html';
+
+// Demo dataset used when MOCK_DATA==true
 const DEMO_ROWS = [
   { title: 'Neon Picks', items: [
       { id: 10001, title: 'Glow Streets', poster: 'https://placehold.co/400x600/7f5dff/fff', overview: 'Neon-lit streets, synthwave beats.' },
@@ -42,7 +42,6 @@ const DEMO_ROWS = [
   }
 ];
 
-// fetch wrapper for TMDB
 async function tmdbFetch(path, params = {}) {
   if (MOCK_DATA) return null;
   const url = new URL(TMDB_BASE + path);
@@ -53,7 +52,6 @@ async function tmdbFetch(path, params = {}) {
   return res.json();
 }
 
-// utilities
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
   for (const k in attrs) {
@@ -65,7 +63,6 @@ function el(tag, attrs = {}, ...children) {
   return node;
 }
 
-// build a row
 function renderRow(title, items=[]) {
   const section = el('section', {class:'card-section'});
   const header = el('div', {class:'row-title'}, el('h3', {}, title));
@@ -76,7 +73,6 @@ function renderRow(title, items=[]) {
   rowsContainer.appendChild(section);
 }
 
-// tile card for movie/show
 function tileForItem(it) {
   const poster = it.poster || (it.poster_path ? IMAGE_BASE + it.poster_path : 'fallback.png');
   const tile = el('article', {class:'tile', role:'button', tabindex:0});
@@ -90,110 +86,221 @@ function tileForItem(it) {
   return tile;
 }
 
-// open detail modal
+/* ---- OPEN DETAIL (modal) ----
+   This modal contains:
+   - Title/overview/poster
+   - Trailer button (YouTube via TMDB videos)
+   - Season & Episode pickers (for TV)
+   - Play button — which opens dedicated player page (player.html) with query params
+*/
 async function openDetail(it) {
   modal.setAttribute('aria-hidden', 'false');
   modal.style.display = 'flex';
-  modalBody.innerHTML = ''; // clear
+  modalBody.innerHTML = '';
 
-  const left = el('div', {class:'md-left'}, el('img',{src: it.poster || (it.poster_path ? IMAGE_BASE+it.poster_path : 'fallback.png'), class:'poster', alt:it.title||it.name}));
-  const right = el('div', {class:'md-right'});
-  right.appendChild(el('h2',{id:'modalTitle'}, it.title || it.name || 'Untitled'));
-  right.appendChild(el('p', {class:'small'}, it.overview || it.tagline || 'No description available.'));
-  right.appendChild(el('div',{style:'margin:12px 0'}, el('button',{id:'playBtn'}, 'Play trailer')));
+  const isTV = it.media_type === 'tv' || it.first_air_date;
+  const left = el('div', { class:'md-left' },
+    el('img',{
+      src: it.poster || (it.poster_path ? IMAGE_BASE+it.poster_path : 'fallback.png'),
+      class:'poster', alt: it.title || it.name
+    })
+  );
 
-  modalBody.appendChild(left); modalBody.appendChild(right);
+  const right = el('div', { class:'md-right' });
+  right.appendChild(el('h2', { id:'modalTitle' }, it.title || it.name));
+  right.appendChild(el('p', { class:'small' }, it.overview || 'No description available.'));
 
-  // load trailer (TMDB videos) if available
-  const playBtn = document.getElementById('playBtn');
-  playBtn.onclick = async () => {
-    right.querySelector('.player-embed')?.remove();
-    const embed = el('div',{class:'player-embed'}, 'Loading trailer...');
-    right.appendChild(embed);
+  // trailer button
+  const trailerBtn = el('button', { id: "trailerBtn", class: "trailer-btn" }, "Watch Trailer");
+
+  // player controls area (but dedicated player page will be used)
+  const controlsWrap = el('div', { style: 'margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;' });
+
+  // TV: season + episode selects
+  let seasonSelect = null, episodeSelect = null;
+  if (isTV) {
+    seasonSelect = el('select', { id: "seasonSelect" });
+    episodeSelect = el('select', { id: "episodeSelect" });
+    controlsWrap.appendChild(el('label', {}, 'Season:'));
+    controlsWrap.appendChild(seasonSelect);
+    controlsWrap.appendChild(el('label', {}, 'Episode:'));
+    controlsWrap.appendChild(episodeSelect);
+  }
+
+  // Play button: opens dedicated player page
+  const playBtn = el('button', { id: "playBtn", class:'play-btn' }, isTV ? 'Play Episode (open player page)' : 'Play Movie (open player page)');
+
+  controlsWrap.appendChild(playBtn);
+  controlsWrap.appendChild(trailerBtn);
+  right.appendChild(controlsWrap);
+
+  modalBody.appendChild(left);
+  modalBody.appendChild(right);
+
+  // load seasons & episodes if TV
+  if (isTV) {
+    await loadSeasons(it.id, seasonSelect, episodeSelect);
+  }
+
+  // trailer button logic (loads trailer inline in modal below controls)
+  trailerBtn.onclick = async () => {
+    // create area for trailer if not exists
+    let trailerArea = right.querySelector('.player-embed.trailer-area');
+    if (!trailerArea) {
+      trailerArea = el('div',{class:'player-embed trailer-area', style:'margin-top:12px;min-height:200px;'});
+      right.appendChild(trailerArea);
+    }
+    trailerArea.innerHTML = 'Loading trailer...';
+
     try {
-      let videos = null;
-      if (!MOCK_DATA) {
-        const path = (it.media_type === 'tv' || it.first_air_date) ? `/tv/${it.id}/videos` : `/movie/${it.id}/videos`;
-        const json = await tmdbFetch(path);
-        videos = json && json.results ? json.results : [];
+      if (MOCK_DATA) {
+        trailerArea.innerHTML = `<video controls style="width:100%;height:100%"><source src="videos/vid1.mp4" type="video/mp4"></video>`;
+        return;
       }
-      const yt = (videos || []).find(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser')) || null;
+      const path = isTV ? `/tv/${it.id}/videos` : `/movie/${it.id}/videos`;
+      const json = await tmdbFetch(path);
+      const vids = (json && json.results) ? json.results : [];
+      const yt = vids.find(v => v.site === 'YouTube' && v.type === 'Trailer') || vids.find(v=>v.site==='YouTube');
       if (yt) {
-        embed.innerHTML = `<iframe src="https://www.youtube.com/embed/${yt.key}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+        trailerArea.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${yt.key}" frameborder="0" allowfullscreen></iframe>`;
       } else {
-        // fallback to demo clip or show message
-        embed.innerHTML = `<div style="padding:18px;color:var(--muted)">Trailer not found. Playing demo clip.</div><video controls playsinline style="width:100%;height:100%"><source src="videos/vid1.mp4" type="video/mp4">Your browser doesn't support video playback.</video>`;
+        trailerArea.innerHTML = `<div style="padding:18px;color:var(--muted)">Trailer not found.</div>`;
       }
     } catch (err) {
       console.warn('Trailer load failed', err);
-      const embedErr = el('div',{class:'player-embed'}, 'Could not load trailer — demo clip shown.');
-      right.appendChild(embedErr);
+      trailerArea.innerHTML = `<div style="padding:18px;color:var(--muted)">Trailer unavailable.</div>`;
+    }
+  };
+
+  // Play button — open the dedicated player page (Option C)
+  playBtn.onclick = async () => {
+    try {
+      let imdb = null;
+      if (MOCK_DATA) {
+        imdb = 'tt4154796'; // demo
+      } else {
+        if (isTV) {
+          // resolve episode imdb (using selected season & episode)
+          const s = seasonSelect.value || 1;
+          const e = episodeSelect.value || 1;
+          const episodeData = await tmdbFetch(`/tv/${it.id}/season/${s}/episode/${e}`);
+          imdb = episodeData && episodeData.imdb_id;
+          if (!imdb) {
+            alert('IMDB ID not found for that episode.');
+            return;
+          }
+          // open player page with s & e
+          const url = `${PLAYER_PAGE}?imdb=${encodeURIComponent(imdb)}&type=tv&s=${encodeURIComponent(s)}&e=${encodeURIComponent(e)}`;
+          window.location.href = url;
+        } else {
+          const movieData = await tmdbFetch(`/movie/${it.id}`);
+          imdb = movieData && movieData.imdb_id;
+          if (!imdb) { alert('IMDB ID not found for movie.'); return; }
+          const url = `${PLAYER_PAGE}?imdb=${encodeURIComponent(imdb)}&type=movie`;
+          window.location.href = url;
+        }
+      }
+
+      // if mock mode - open player page with demo imdb
+      if (MOCK_DATA) {
+        if (isTV) {
+          window.open(`${PLAYER_PAGE}?imdb=${imdb}&type=tv&s=1&e=1`, '_blank');
+        } else {
+          window.open(`${PLAYER_PAGE}?imdb=${imdb}&type=movie`, '_blank');
+        }
+      }
+    } catch (err) {
+      console.error('Play open failed', err);
+      alert('Could not open player page.');
     }
   };
 }
 
-// close modal
-modalClose.onclick = () => {
-  modal.style.display = 'none';
-  modal.setAttribute('aria-hidden', 'true');
-  modalBody.innerHTML = '';
-};
-modal.addEventListener('click', (ev) => {
-  if (ev.target === modal) { modalClose.click(); }
-});
+async function loadSeasons(tvId, seasonSelect, episodeSelect) {
+  if (MOCK_DATA) {
+    seasonSelect.innerHTML = `<option value="1">Season 1</option>`;
+    episodeSelect.innerHTML = `<option value="1">Episode 1</option>`;
+    return;
+  }
+  try {
+    const show = await tmdbFetch(`/tv/${tvId}`);
+    seasonSelect.innerHTML = '';
+    (show.seasons || []).forEach(s => {
+      if (s.season_number > 0) seasonSelect.innerHTML += `<option value="${s.season_number}">Season ${s.season_number}</option>`;
+    });
+    // load episodes for first season
+    loadEpisodes(tvId, seasonSelect.value, episodeSelect);
+    seasonSelect.onchange = () => loadEpisodes(tvId, seasonSelect.value, episodeSelect);
+  } catch (err) {
+    console.warn('loadSeasons failed', err);
+    seasonSelect.innerHTML = `<option value="1">Season 1</option>`;
+    episodeSelect.innerHTML = `<option value="1">Episode 1</option>`;
+  }
+}
 
-// hero click actions
-heroPlayBtn.onclick = ()=> {
-  // open the first available item in demo or first row
+async function loadEpisodes(tvId, seasonNumber, episodeSelect) {
+  if (MOCK_DATA) {
+    episodeSelect.innerHTML = `<option value="1">Episode 1</option>`;
+    return;
+  }
+  try {
+    const season = await tmdbFetch(`/tv/${tvId}/season/${seasonNumber}`);
+    episodeSelect.innerHTML = '';
+    (season.episodes || []).forEach(ep => {
+      episodeSelect.innerHTML += `<option value="${ep.episode_number}">Episode ${ep.episode_number}: ${ep.name}</option>`;
+    });
+  } catch (err) {
+    console.warn('loadEpisodes failed', err);
+    episodeSelect.innerHTML = `<option value="1">Episode 1</option>`;
+  }
+}
+
+// modal close behavior
+const modalCloseBtn = document.getElementById('modalClose');
+modalCloseBtn.onclick = () => { modal.style.display='none'; modal.setAttribute('aria-hidden','true'); modalBody.innerHTML=''; };
+modal.addEventListener('click', (ev)=> { if (ev.target === modal) modalCloseBtn.click(); });
+
+// hero actions
+document.getElementById('heroPlayBtn').onclick = () => {
   const firstTile = document.querySelector('.tile');
   if (firstTile) firstTile.click();
 };
-heroMoreBtn.onclick = ()=> {
-  // show modal with hero content (no-op if hero not set)
-  const t = heroTitle.dataset.item ? JSON.parse(heroTitle.dataset.item) : null;
-  if (t) openDetail(t);
-};
 
 // search
-searchBtn.onclick = () => runSearch(searchInput.value);
+document.getElementById('search-btn').onclick = () => runSearch(searchInput.value);
 searchInput.addEventListener('keydown', (e)=> { if (e.key === 'Enter') runSearch(searchInput.value); });
+
 async function runSearch(q) {
   if (!q || !q.trim()) return;
   searchResults.innerHTML = '';
   searchResultsSection.hidden = false;
   try {
     if (MOCK_DATA) {
-      // trivial fuzzy search over DEMO_ROWS
       const ql = q.toLowerCase();
       const items = DEMO_ROWS.flatMap(r => r.items).filter(i => (i.title || '').toLowerCase().includes(ql));
       if (items.length === 0) searchResults.appendChild(el('div',{}, 'No results.'));
       else items.forEach(it => searchResults.appendChild(tileForItem(it)));
       return;
     }
-    // use TMDB multi search
     const data = await tmdbFetch('/search/multi', {query:q, language:'en-US', page:1});
-    (data.results || []).forEach(it => {
-      if (it.media_type === 'person') return;
-      searchResults.appendChild(tileForItem(it));
-    });
+    (data.results || []).forEach(it => { if (it.media_type === 'person') return; searchResults.appendChild(tileForItem(it)); });
   } catch (err) {
     console.error(err);
     searchResults.appendChild(el('div',{}, 'Search failed.'));
   }
 }
 
-// initial render
+// init
 async function init() {
   rowsContainer.innerHTML = '';
 
-  // set a default hero
+  // default hero text & poster
   heroTitle.textContent = 'Featured — Color Burst';
-  heroDesc.textContent = 'A material-styled demo: click a poster to open details & trailer.';
+  heroDesc.textContent = 'A material-styled demo: click a poster to open details & trailer or open the player page.';
   heroPoster.src = 'https://placehold.co/600x340/ff3f7f/fff';
 
   if (MOCK_DATA) {
     DEMO_ROWS.forEach(r => renderRow(r.title, r.items));
-    // set first hero item meta
     const first = DEMO_ROWS[0].items[0];
     heroTitle.dataset.item = JSON.stringify(first);
     heroPoster.src = first.poster;
@@ -201,7 +308,6 @@ async function init() {
     return;
   }
 
-  // live TMDB rows: popular movies, popular TV, trending
   try {
     const [movies, tv, trending] = await Promise.all([
       tmdbFetch('/movie/popular', {language:'en-US', page:1}),
@@ -212,8 +318,7 @@ async function init() {
     if (tv && tv.results) renderRow('Popular TV', tv.results.slice(0,12));
     if (trending && trending.results) renderRow('Trending This Week', trending.results.slice(0,12));
 
-    // hero set to first trending if available
-    const f = (trending.results && trending.results[0]) || (movies.results && movies.results[0]);
+    const f = (trending && trending.results && trending.results[0]) || (movies && movies.results && movies.results[0]);
     if (f) {
       heroTitle.textContent = f.title || f.name || 'Featured';
       heroDesc.textContent = (f.overview || '').slice(0,200);
@@ -222,10 +327,8 @@ async function init() {
     }
   } catch (err) {
     console.error('Init failed', err);
-    // fallback to mock rows if TMDB failed
     DEMO_ROWS.forEach(r => renderRow(r.title, r.items));
   }
 }
 
-// kick off
 init();

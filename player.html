@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StreamHub Player</title>
+  <style>
+    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:Inter,system-ui,Arial}
+    .player-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;gap:18px}
+    .player-frame{width:min(1100px,98%);height:640px;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+    .meta{max-width:1100px;width:98%;color:#9fb3d9}
+    .small{font-size:13px;color:#9fb3d9}
+    @media (max-width:860px){ .player-frame{height:360px} }
+  </style>
+</head>
+<body>
+  <div class="player-wrap">
+    <div id="meta" class="meta"></div>
+    <div id="frame" class="player-frame">Loading player…</div>
+    <div class="small">If the embed fails, check the IMDB param or try a different episode.</div>
+  </div>
+
+<script>
+  // parse query params
+  function qp() {
+    const u = new URL(window.location.href);
+    const p = {};
+    for (const [k,v] of u.searchParams.entries()) p[k]=v;
+    return p;
+  }
+  const params = qp();
+  const frame = document.getElementById('frame');
+  const meta = document.getElementById('meta');
+
+  // expected params:
+  // imdb (required), type (movie|tv), s (season), e (episode)
+  const imdb = params.imdb;
+  const type = params.type || 'movie';
+  const s = params.s || '';
+  const e = params.e || '';
+
+  if (!imdb) {
+    frame.innerHTML = '<div style="padding:20px;color:#f88">No imdb param provided.</div>';
+  } else {
+    meta.innerHTML = `<strong>IMDB:</strong> ${imdb} &nbsp; <span class="small">type=${type} ${s?('&season='+s):''} ${e?('&ep='+e):''}</span>`;
+    // build vidsrc embed URL (your original player)
+    let src = '';
+    if (type === 'tv') {
+      const ss = s || 1;
+      const ee = e || 1;
+      src = `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(ss)}&e=${encodeURIComponent(ee)}`;
+    } else {
+      src = `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`;
+    }
+    frame.innerHTML = `<iframe src="${src}" frameborder="0" width="100%" height="100%" allowfullscreen></iframe>`;
+  }
+</script>
+</body>
+</html>
