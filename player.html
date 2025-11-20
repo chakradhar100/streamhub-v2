@@ -5,18 +5,103 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>StreamHub Player</title>
   <style>
-    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:Inter,system-ui,Arial}
-    .topbar{width:100%;display:flex;align-items:center;background:#0c0c0c;padding:12px 16px;box-shadow:0 2px 10px rgba(0,0,0,.4);position:sticky;top:0;z-index:20}
-    .back-btn{background:#ff6a2b;color:#fff;padding:8px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;margin-right:12px}
-    .player-wrap{min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;gap:18px}
-    .player-frame{width:min(1100px,98%);height:640px;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-    #meta{max-width:1100px;width:98%;color:#9fb3d9;padding-left:4px}
-    .small{font-size:13px;color:#9fb3d9}
-    @media (max-width:860px){ .player-frame{height:360px} }
-    .load-btn{background:#ff6a2b;border:0;padding:12px 18px;color:#fff;border-radius:8px;font-weight:700;cursor:pointer}
-    .info-url{margin-top:12px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;word-break:break-all;color:#cfe1ff}
-    .mirror-list{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
-    .mirror-list a{background:#1b2a3a;color:#fff;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:13px}
+    html,body{
+      height:100%;margin:0;background:#000;color:#fff;
+      font-family:Inter,system-ui,Arial;
+    }
+
+    .topbar{
+      width:100%;
+      display:flex;
+      align-items:center;
+      background:#0c0c0c;
+      padding:12px 16px;
+      box-shadow:0 2px 10px rgba(0,0,0,.4);
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .back-btn{
+      background:#ff6a2b;
+      color:#fff;
+      padding:8px 14px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+      margin-right:12px;
+    }
+
+    .player-wrap{
+      min-height:calc(100vh - 60px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:18px;
+      gap:18px;
+    }
+
+    .player-frame{
+      width:min(1100px,98%);
+      height:640px;
+      background:#000;
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+    }
+
+    #meta{
+      max-width:1100px;
+      width:98%;
+      color:#9fb3d9;
+      padding-left:4px;
+    }
+
+    .small{
+      font-size:13px;
+      color:#9fb3d9;
+    }
+
+    @media (max-width:860px){
+      .player-frame{height:360px}
+    }
+
+    .load-btn{
+      background:#ff6a2b;
+      border:0;
+      padding:12px 18px;
+      color:#fff;
+      border-radius:8px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .info-url{
+      margin-top:12px;
+      padding:10px;
+      background:rgba(255,255,255,0.05);
+      border-radius:8px;
+      word-break:break-all;
+      color:#cfe1ff;
+    }
+
+    .mirror-list{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .mirror-list a{
+      background:#1b2a3a;
+      color:#fff;
+      padding:6px 10px;
+      border-radius:8px;
+      text-decoration:none;
+      font-size:13px;
+    }
   </style>
 </head>
 <body>
@@ -27,73 +112,116 @@
   </div>
 
   <div class="player-wrap">
-    <div id="meta" class="meta"></div>
+    <div id="meta"></div>
+
     <div id="frame" class="player-frame">
       <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;">
-        <div style="margin-bottom:12px;color:#9fb3d9">Player is ready — tap to load (saves data).</div>
+        <div style="margin-bottom:12px;color:#9fb3d9">Player ready — click to load.</div>
         <button id="loadBtn" class="load-btn">▶ Load Player</button>
       </div>
     </div>
+
     <div id="urlInfo" class="info-url" style="display:none"></div>
     <div id="mirrorArea" class="mirror-list" style="display:none"></div>
-    <div class="small">If the embed fails, click the URL shown above or try a mirror.</div>
+
+    <div class="small">If embed fails, click the URL or try a mirror.</div>
   </div>
 
 <script>
-  function qp() { const u = new URL(window.location.href); const p = {}; for (const [k,v] of u.searchParams.entries()) p[k]=v; return p; }
-  const params = qp();
-  const frame = document.getElementById('frame');
-  const meta = document.getElementById('meta');
-  const urlInfo = document.getElementById('urlInfo');
-  const mirrorArea = document.getElementById('mirrorArea');
-  const loadBtn = document.getElementById('loadBtn');
+  function qp() {
+    const u = new URL(window.location.href);
+    const p = {};
+    for (const [k,v] of u.searchParams.entries()) p[k]=v;
+    return p;
+  }
 
+  const params = qp();
   const imdb = params.imdb;
-  const type = params.type || 'movie';
+  const type = params.type || "movie";
   const s = params.s;
   const e = params.e;
 
-  if (!imdb) { frame.innerHTML = '<div style="padding:20px;color:#f88">Missing IMDB ID.</div>'; }
-  else {
-    meta.innerHTML = `<strong>IMDB:</strong> ${imdb} <span class="small"> &nbsp; • ${type.toUpperCase()} ${s ? `• S${s}` : ''} ${e ? `• E${e}` : ''}</span>`;
+  const frame = document.getElementById("frame");
+  const meta = document.getElementById("meta");
+  const urlInfo = document.getElementById("urlInfo");
+  const mirrorArea = document.getElementById("mirrorArea");
+  const loadBtn = document.getElementById("loadBtn");
+
+  if (!imdb) {
+    frame.innerHTML = '<div style="padding:20px;color:#f88">Missing IMDB ID.</div>';
   }
 
-  // build primary embed URL (do not load automatically)
-  const primarySrc = imdb ? (type === 'tv' ? `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}` : `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`) : '';
+  meta.innerHTML = `
+    <strong>IMDB:</strong> ${imdb}
+    <span class="small">
+      &nbsp;• ${type.toUpperCase()}
+      ${s ? " • S"+s : ""}
+      ${e ? " • E"+e : ""}
+    </span>
+  `;
 
-  // mirror suggestions (clickable)
+  // MAIN URL (no sandbox)
+  let primarySrc = "";
+  if (imdb) {
+    if (type === "tv") {
+      primarySrc =
+        `https://vidsrc-embed.ru/embed/tv?imdb=${encodeURIComponent(imdb)}&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}`;
+    } else {
+      primarySrc =
+        `https://vidsrc-embed.ru/embed/movie?imdb=${encodeURIComponent(imdb)}`;
+    }
+  }
+
+  // Mirror list
   const mirrors = imdb ? [
-    `https://vidsrc-embed.ru/embed/${type === 'tv' ? 'tv' : 'movie'}?imdb=${encodeURIComponent(imdb)}${type==='tv'?`&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}`:''}`,
-    `https://vidsrc.me/embed/${type === 'tv' ? 'tv' : 'movie'}?imdb=${encodeURIComponent(imdb)}${type==='tv'?`&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}`:''}`,
-    `https://vidsrc.to/embed/${type === 'tv' ? 'tv' : 'movie'}?imdb=${encodeURIComponent(imdb)}${type==='tv'?`&s=${encodeURIComponent(s||1)}&e=${encodeURIComponent(e||1)}`:''}`
+    primarySrc,
+    `https://vidsrc.me/embed/${type === "tv" ? "tv" : "movie"}?imdb=${imdb}${type==="tv"?`&s=${s||1}&e=${e||1}`:''}`,
+    `https://vidsrc.to/embed/${type === "tv" ? "tv" : "movie"}?imdb=${imdb}${type==="tv"?`&s=${s||1}&e=${e||1}`:''}`,
+    `https://multiembed.mov/?video_id=${imdb}`
   ] : [];
 
-  // Load player on demand
-  loadBtn.onclick = function() {
-    if (!primarySrc) { frame.innerHTML = '<div style="padding:20px;color:#f88">No player URL.</div>'; return; }
-    frame.innerHTML = `<iframe src="${primarySrc}" frameborder="0" width="100%" height="100%" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-orientation-lock allow-top-navigation-by-user-activation"></iframe>`;
-    // Reveal the URL after a short passive delay (always show so user can verify)
-    setTimeout(() => revealURL(primarySrc), 500); // small delay after load click
+  // Load player when button clicked
+  loadBtn.onclick = function () {
+    frame.innerHTML = `
+      <iframe
+        src="${primarySrc}"
+        frameborder="0"
+        width="100%"
+        height="100%"
+        allowfullscreen
+      ></iframe>
+    `;
+
+    // Show embed URL after load
+    setTimeout(() => revealURL(primarySrc), 500);
   };
 
-  // passive reveal after 5 seconds even if user didn't click Load (helpful when embed is preloaded elsewhere)
+  // Passive reveal (5 seconds)
   setTimeout(() => revealURL(primarySrc), 5000);
 
   function revealURL(url) {
     if (!url) return;
-    urlInfo.style.display = 'block';
-    urlInfo.innerHTML = `<strong>Embed URL used:</strong><br><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    // show mirrors
-    mirrorArea.style.display = 'flex';
-    mirrorArea.innerHTML = '';
+    urlInfo.style.display = "block";
+    urlInfo.innerHTML = `
+      <strong>Embed URL used:</strong><br>
+      <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
+    `;
+
+    mirrorArea.style.display = "flex";
+    mirrorArea.innerHTML = "";
     mirrors.forEach(m => {
-      const a = document.createElement('a'); a.href = m; a.target = '_blank'; a.rel='noopener noreferrer'; a.textContent = 'Open mirror';
+      const a = document.createElement("a");
+      a.href = m;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.innerText = "Open mirror";
       mirrorArea.appendChild(a);
     });
   }
 
-  // prevent window.open abuse from embeds
-  window.open = function(){ console.log("Popup blocked."); return null; };
+  // Prevent popup ads
+  window.open = () => null;
 </script>
+
 </body>
 </html>
